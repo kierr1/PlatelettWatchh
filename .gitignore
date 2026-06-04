@@ -1,0 +1,19 @@
+# Environment variables — NEVER commit these
+.env
+_env
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Model weights — too large for GitHub (upload directly to HF Spaces)
+*.pt
+*.onnx

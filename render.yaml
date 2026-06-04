@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: plateletwatch
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: OPENROUTER_API_KEY
+        sync: false        # you enter this manually in Render dashboard
+      - key: INFERENCE_URL
+        sync: false        # paste your HF Space URL here after deploying it
+      - key: SITE_URL
+        sync: false        # Render will give you this after first deploy

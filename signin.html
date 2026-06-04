@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlateletWatch – Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red-deep: #b91c1c;
+    --red-main: #dc2626;
+    --red-mid:  #ef4444;
+    --red-soft: #fca5a5;
+    --red-pale: #fef2f2;
+    --red-panel:#c0392b;
+    --white: #ffffff;
+    --gray-1: #f9f5f5;
+    --gray-2: #e5e0e0;
+    --gray-3: #9c8f8f;
+    --text:    #1a0f0f;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gray-1);
+  }
+
+  .card {
+    display: flex;
+    width: 820px;
+    min-height: 580px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(185,28,28,.18), 0 4px 16px rgba(0,0,0,.08);
+    animation: fadeUp .55s cubic-bezier(.22,1,.36,1) both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(28px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── LEFT PANEL ── */
+  .panel {
+    width: 300px;
+    flex-shrink: 0;
+    background: linear-gradient(155deg, var(--red-deep) 0%, var(--red-panel) 55%, #7f1d1d 100%);
+    padding: 36px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: visible;
+  }
+  .panel::before {
+    content:'';
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse at 30% 15%, rgba(255,255,255,.12) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .panel::after {
+    content:'';
+    position:absolute;
+    bottom:-60px; right:-60px;
+    width:220px; height:220px;
+    border-radius:50%;
+    background: rgba(255,255,255,.05);
+    pointer-events:none;
+  }
+
+  .logo-row { display:flex; align-items:center; gap:10px; margin-bottom:auto; }
+  .logo-icon {
+    width:48px; height:48px; border-radius:12px;
+    background:rgba(255,255,255,.18);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px;
+    overflow:hidden;
+  }
+  .logo-icon img { width:100%; height:100%; object-fit:cover; border-radius:12px; }
+  .logo-text { color:var(--white); }
+  .logo-text strong { font-size:17px; font-weight:700; display:block; }
+  .logo-text strong span { color:var(--red-soft); }
+  .logo-text small { font-size:9.5px; letter-spacing:.12em; opacity:.75; text-transform:uppercase; }
+
+  .panel-headline { color:var(--white); margin: 28px 0 10px; line-height:1.2; }
+  .panel-headline em {
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:400;
+    font-size:32px; display:block;
+  }
+  .panel-headline strong { font-size:26px; font-weight:700; display:block; }
+  .panel-sub { color:rgba(255,255,255,.72); font-size:12.5px; line-height:1.55; margin-bottom:24px; }
+  .features { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:28px; }
+  .features li {
+    color:rgba(255,255,255,.88); font-size:12px;
+    display:flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,.09); border-radius:20px; padding:6px 12px;
+  }
+  .features li::before { content:'●'; color:var(--red-soft); font-size:7px; flex-shrink:0; }
+
+  .disclaimer {
+    background:rgba(255,220,100,.12); border-radius:10px; padding:10px 12px;
+    color:rgba(255,255,255,.65); font-size:10px; line-height:1.5;
+    display:flex; gap:8px; margin-top:auto; overflow:visible;
+    flex-shrink:0; word-break:break-word;
+  }
+  .disclaimer span { font-size:14px; flex-shrink:0; }
+  .disclaimer span:last-child { font-size:10px; flex-shrink:1; min-width:0; }
+
+  /* ── RIGHT FORM ── */
+  .form-side {
+    flex:1; background:var(--white);
+    padding:40px 40px 32px;
+    display:flex; flex-direction:column; position:relative;
+  }
+
+  .back-btn {
+    position:absolute; top:18px; right:22px;
+    text-decoration: none;
+    background:none; border:none; cursor:pointer;
+    color:var(--red-main); font-size:18px;
+    width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+    border-radius:50%; transition: background .2s;
+  }
+  .back-btn:hover { background:var(--red-pale); }
+
+  .form-title { font-size:26px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .form-sub   { font-size:13px; color:var(--gray-3); margin-bottom:22px; }
+
+  .tab-row {
+    display:flex; background:var(--red-pale); border-radius:30px;
+    padding:4px; margin-bottom:26px;
+  }
+  .tab {
+    flex:1; text-align:center; padding:8px;
+    border-radius:26px; font-size:13.5px; font-weight:500;
+    cursor:pointer; border:none; background:none;
+    color:var(--gray-3); transition: all .25s;
+    text-decoration:none; display:block; line-height:1;
+  }
+  .tab.active { background:var(--white); color:var(--red-main); box-shadow:0 2px 8px rgba(0,0,0,.1); }
+
+  .field { margin-bottom:16px; }
+  .field label {
+    display:block; font-size:11px; font-weight:600;
+    letter-spacing:.07em; text-transform:uppercase;
+    color:var(--gray-3); margin-bottom:6px;
+  }
+  .input-wrap {
+    display:flex; align-items:center;
+    border:1.5px solid var(--gray-2); border-radius:10px;
+    background:var(--red-pale);
+    transition: border-color .2s, box-shadow .2s; overflow:hidden;
+  }
+  .input-wrap:focus-within {
+    border-color:var(--red-main);
+    box-shadow: 0 0 0 3px rgba(220,38,38,.1);
+  }
+  .input-wrap .ico { padding:0 12px; color:var(--red-soft); font-size:15px; flex-shrink:0; }
+  .input-wrap input {
+    flex:1; border:none; background:none; outline:none;
+    font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text); padding:12px 0;
+  }
+  .input-wrap input::placeholder { color:var(--gray-3); }
+  .toggle-pw {
+    background:none; border:none; cursor:pointer;
+    padding:0 12px; color:var(--gray-3); font-size:15px; transition: color .2s;
+  }
+  .toggle-pw:hover { color:var(--red-main); }
+
+  .row-check {
+    display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;
+  }
+  .check-label {
+    display:flex; align-items:center; gap:7px;
+    font-size:13px; color:var(--gray-3); cursor:pointer;
+  }
+  .check-label input[type=checkbox] { accent-color:var(--red-main); width:14px; height:14px; }
+  .forgot { font-size:13px; color:var(--red-main); text-decoration:none; font-weight:500; }
+  .forgot:hover { text-decoration:underline; }
+
+  .btn-primary {
+    width:100%; padding:13px;
+    background:linear-gradient(135deg, var(--red-main), var(--red-deep));
+    color:var(--white); border:none; border-radius:10px;
+    font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600;
+    cursor:pointer; letter-spacing:.03em;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition: opacity .2s, transform .15s;
+    box-shadow: 0 4px 14px rgba(220,38,38,.35);
+  }
+  .btn-primary:hover { opacity:.92; transform:translateY(-1px); }
+  .btn-primary:active { transform:translateY(0); }
+  .btn-primary:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+
+  .divider {
+    text-align:center; position:relative;
+    margin:18px 0; color:var(--gray-3); font-size:12px;
+  }
+  .divider::before, .divider::after {
+    content:''; position:absolute; top:50%;
+    width:36%; height:1px; background:var(--gray-2);
+  }
+  .divider::before { left:0; }
+  .divider::after  { right:0; }
+
+  .social-row { display:flex; gap:12px; margin-bottom:18px; }
+  .btn-social {
+    flex:1; padding:10px; border:1.5px solid var(--gray-2);
+    border-radius:10px; background:var(--white); cursor:pointer;
+    font-size:13.5px; font-weight:500; color:var(--text);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition: border-color .2s, background .2s;
+    font-family:'DM Sans',sans-serif; text-decoration:none;
+  }
+  .btn-social:hover { border-color:var(--red-soft); background:var(--red-pale); }
+
+  .bottom-note { text-align:center; font-size:12px; color:var(--gray-3); margin-bottom:10px; }
+  .bottom-note a { color:var(--red-main); font-weight:600; text-decoration:none; }
+  .bottom-note a:hover { text-decoration:underline; }
+
+  .legal { text-align:center; font-size:11px; color:var(--gray-3); line-height:1.5; margin-top:auto; }
+  .legal a { color:var(--red-main); text-decoration:none; }
+  .legal a:hover { text-decoration:underline; }
+
+  /* Alert / Toast */
+  .alert {
+    display:none; padding:10px 14px; border-radius:8px; font-size:13px;
+    margin-bottom:16px; align-items:center; gap:8px;
+  }
+  .alert.show { display:flex; }
+  .alert-error { background:#fef2f2; border:1px solid #fca5a5; color:#b91c1c; }
+  .alert-success { background:#f0fdf4; border:1px solid #86efac; color:#166534; }
+
+  @media(max-width:700px){
+    body { padding:12px; }
+    .card { flex-direction:column; width:100%; min-height:unset; }
+    .panel { width:100%; padding:24px 20px 20px; }
+    .panel-headline em { font-size:24px; }
+    .panel-headline strong { font-size:20px; }
+    .form-side { padding:28px 22px 24px; }
+  }
+
+  /* ── OAUTH PROFILE MODAL ── */
+  .modal-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(26,15,15,.55); backdrop-filter:blur(4px);
+    z-index:1000; align-items:center; justify-content:center;
+    padding:16px;
+  }
+  .modal-overlay.show { display:flex; }
+
+  .modal {
+    background:var(--white); border-radius:20px;
+    width:100%; max-width:820px; max-height:92vh;
+    overflow-y:auto; padding:36px 44px 32px;
+    box-shadow:0 32px 80px rgba(185,28,28,.22), 0 4px 20px rgba(0,0,0,.12);
+    animation: modalIn .4s cubic-bezier(.22,1,.36,1) both;
+    position:relative;
+  }
+  @keyframes modalIn {
+    from { opacity:0; transform:scale(.94) translateY(20px); }
+    to   { opacity:1; transform:scale(1) translateY(0); }
+  }
+
+  .modal-badge {
+    display:inline-flex; align-items:center; gap:7px;
+    background:var(--red-pale); border:1px solid var(--red-soft);
+    color:var(--red-deep); border-radius:20px;
+    padding:5px 12px; font-size:11.5px; font-weight:600;
+    letter-spacing:.04em; margin-bottom:14px;
+  }
+  .modal-title { font-size:22px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .modal-sub   { font-size:13px; color:var(--gray-3); margin-bottom:20px; line-height:1.5; }
+
+  /* Reuse the same field/input styles */
+  .modal .field { margin-bottom:13px; }
+  .modal .field label {
+    display:block; font-size:10.5px; font-weight:600;
+    letter-spacing:.07em; text-transform:uppercase;
+    color:var(--gray-3); margin-bottom:5px;
+  }
+  .modal .input-wrap {
+    display:flex; align-items:center;
+    border:1.5px solid var(--gray-2); border-radius:9px;
+    background:var(--red-pale);
+    transition: border-color .2s, box-shadow .2s; overflow:hidden;
+  }
+  .modal .input-wrap:focus-within {
+    border-color:var(--red-main);
+    box-shadow:0 0 0 3px rgba(220,38,38,.1);
+  }
+  .modal .input-wrap .ico { padding:0 10px; color:var(--red-soft); font-size:14px; flex-shrink:0; }
+  .modal .input-wrap input,
+  .modal .input-wrap select {
+    flex:1; border:none; background:none; outline:none;
+    font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text);
+    padding:10px 0; min-width:0;
+  }
+  .modal .input-wrap select { padding:10px 6px 10px 0; cursor:pointer; }
+  .modal .input-wrap input::placeholder { color:var(--gray-3); }
+  .modal .toggle-pw {
+    background:none; border:none; cursor:pointer;
+    padding:0 10px; color:var(--gray-3); font-size:14px;
+  }
+  .modal .toggle-pw:hover { color:var(--red-main); }
+
+  .modal-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .modal-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+  .modal-section-label {
+    font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--red-soft); margin:16px 0 10px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .modal-section-label::after {
+    content:''; flex:1; height:1px; background:var(--gray-2);
+  }
+
+  .modal .dd-loading { display:none; padding:0 10px; }
+  .modal .dd-loading.show { display:block; }
+  .modal .spinner {
+    width:13px; height:13px; border-radius:50%;
+    border:2px solid var(--red-soft); border-top-color:var(--red-main);
+    animation:spin .6s linear infinite;
+  }
+
+  .modal-actions { display:flex; gap:10px; margin-top:20px; }
+  .modal-actions .btn-primary { flex:1; margin:0; padding:12px; font-size:14px; }
+  .btn-skip {
+    padding:12px 18px; border:1.5px solid var(--gray-2); border-radius:10px;
+    background:none; cursor:pointer; font-family:'DM Sans',sans-serif;
+    font-size:14px; color:var(--gray-3); transition:all .2s;
+  }
+  .btn-skip:hover { border-color:var(--red-soft); color:var(--red-main); }
+
+  .modal-alert {
+    display:none; padding:9px 13px; border-radius:8px; font-size:12.5px;
+    margin-bottom:14px; align-items:center; gap:8px;
+  }
+  .modal-alert.show { display:flex; }
+  .modal-alert.error { background:#fef2f2; border:1px solid #fca5a5; color:#b91c1c; }
+  .modal-alert.success { background:#f0fdf4; border:1px solid #86efac; color:#166534; }
+
+  /* password strength bar */
+  .pw-strength { height:3px; border-radius:3px; background:var(--gray-2); margin-top:5px; overflow:hidden; }
+  .pw-strength-bar { height:100%; width:0%; border-radius:3px; transition:width .3s, background .3s; }
+
+  .field.error .input-wrap { border-color:var(--red-main); }
+  .field .err-msg { font-size:10px; color:var(--red-main); margin-top:3px; display:none; }
+  .field.error .err-msg { display:block; }
+
+  @media(max-width:600px){
+    .modal { padding:22px 18px 20px; }
+    .modal-grid-3, .modal-grid-2 { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <!-- LEFT PANEL -->
+  <div class="panel">
+    <div class="logo-row">
+      <div class="logo-icon"><img src="pics/pic2.png" alt="PlateletWatch Logo"></div>
+      <div class="logo-text">
+        <strong>Platelet<span>Watch</span></strong>
+        <small>Dengue Early Detection</small>
+      </div>
+    </div>
+    <div class="panel-headline">
+      <em>Monitor Platelets.</em>
+      <strong>Detect Risks Early.</strong>
+    </div>
+    <p class="panel-sub">A microscope-integrated web application that supports early dengue detection through platelet count analysis from blood samples.</p>
+    <ul class="features">
+      <li>Real-time platelet count tracking</li>
+      <li>Automated dengue risk stratification</li>
+      <li>AI-assisted blood analysis</li>
+      <li>Secure patient data management</li>
+    </ul>
+    <div class="disclaimer">
+      <span>⚠️</span>
+      <span>Disclaimer: This system is intended for early screening and detection purposes only. It does not replace professional medical diagnosis, treatment, or consultation. Please seek advice from a licensed healthcare professional.</span>
+    </div>
+  </div>
+
+  <!-- RIGHT FORM -->
+  <div class="form-side">
+    <a href="index.html" class="back-btn" title="Go back">←</a>
+
+    <h1 class="form-title">Welcome Back!</h1>
+    <p class="form-sub">Sign in to access the dengue monitoring dashboard.</p>
+
+    <div class="tab-row">
+      <a href="signin.html" class="tab active">Sign In</a>
+      <a href="register.html" class="tab">Register</a>
+    </div>
+
+    <!-- Alert box -->
+    <div class="alert alert-error" id="alert-box">
+      <span>⚠️</span><span id="alert-msg">Something went wrong.</span>
+    </div>
+
+    <div class="field">
+      <label>Email Address</label>
+      <div class="input-wrap">
+        <span class="ico">✉</span>
+        <input type="email" id="email" placeholder="dengue@gmail.com" autocomplete="email">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <div class="input-wrap">
+        <span class="ico">🔒</span>
+        <input type="password" id="pw" placeholder="••••••••" autocomplete="current-password">
+        <button class="toggle-pw" onclick="togglePw()" type="button">👁</button>
+      </div>
+    </div>
+
+    <div class="row-check">
+      <label class="check-label">
+        <input type="checkbox" id="remember"> Remember me
+      </label>
+      <a href="forgotpassword.html" class="forgot">Forgot Password?</a>
+    </div>
+
+    <button class="btn-primary" id="signin-btn" onclick="handleSignIn()">
+      <span>▶</span> Sign in
+    </button>
+
+    <div class="divider">or continue with</div>
+
+    <div class="social-row">
+      <button class="btn-social" onclick="handleOAuth('google')">
+        <svg width="16" height="16" viewBox="0 0 48 48">
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.5-1.45-.79-3-.79-4.59s.29-3.14.79-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.89C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        </svg>
+        Google
+      </button>
+      <button class="btn-social" onclick="handleOAuth('facebook')" id="btn-fb" title="Facebook login is not yet configured">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2">
+          <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+        </svg>
+        Facebook
+      </button>
+    </div>
+
+    <p class="bottom-note">Don't have an account? <a href="register.html">Create one now</a></p>
+
+    <p class="legal">
+      By signing in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>
+      Your data is encrypted and never sold.
+    </p>
+  </div>
+</div>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.config.js"></script>
+
+<!-- Facebook SDK removed: replace appId with a real Meta Developer App ID before re-enabling -->
+<!-- <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0&appId=YOUR_REAL_FACEBOOK_APP_ID"></script> -->
+
+<!-- ── OAUTH PROFILE COMPLETION MODAL ── -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal">
+    <div class="modal-badge">🎉 Almost there!</div>
+    <h2 class="modal-title">Complete Your Profile</h2>
+    <p class="modal-sub">You're signing in for the first time via social login. Please fill in a few details so we can set up your account properly.</p>
+
+    <div class="modal-alert" id="modal-alert">
+      <span>⚠️</span><span id="modal-alert-msg"></span>
+    </div>
+
+    <!-- Name -->
+    <div class="modal-section-label">Personal Information</div>
+    <div class="modal-grid-3">
+      <div class="field" id="mf-lname">
+        <label>Last Name</label>
+        <div class="input-wrap"><span class="ico">👤</span><input type="text" id="m-lname" placeholder="dela Cruz"></div>
+        <span class="err-msg">Required</span>
+      </div>
+      <div class="field" id="mf-fname">
+        <label>First Name</label>
+        <div class="input-wrap"><span class="ico">👤</span><input type="text" id="m-fname" placeholder="Juan"></div>
+        <span class="err-msg">Required</span>
+      </div>
+      <div class="field">
+        <label>Middle Name</label>
+        <div class="input-wrap"><span class="ico">👤</span><input type="text" id="m-mname" placeholder="Santos"></div>
+      </div>
+    </div>
+
+    <!-- Age / Sex / Birthday / Contact -->
+    <div class="modal-grid-2" style="margin-top:10px;">
+      <div class="field" id="mf-age">
+        <label>Age</label>
+        <div class="input-wrap"><span class="ico">#</span><input type="number" id="m-age" min="0" max="120" placeholder="e.g. 25"></div>
+        <span class="err-msg">Required</span>
+      </div>
+      <div class="field" id="mf-sex">
+        <label>Sex / Gender</label>
+        <div class="input-wrap">
+          <span class="ico">⚥</span>
+          <select id="m-sex">
+            <option value="">Select sex</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Prefer not to say</option>
+          </select>
+        </div>
+        <span class="err-msg">Required</span>
+      </div>
+    </div>
+    <div class="modal-grid-2">
+      <div class="field">
+        <label>Contact Number</label>
+        <div class="input-wrap"><span class="ico">📞</span><input type="tel" id="m-contact" placeholder="09XX XXX XXXX"></div>
+      </div>
+      <div class="field">
+        <label>Birth Date</label>
+        <div class="input-wrap" style="gap:2px;">
+          <span class="ico">📅</span>
+          <select id="m-bd-month" style="flex:1.4; padding:10px 4px; border:none; background:none; outline:none; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); cursor:pointer;">
+            <option value="">Month</option>
+          </select>
+          <select id="m-bd-day" style="flex:1; padding:10px 4px; border:none; background:none; outline:none; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); cursor:pointer;">
+            <option value="">Day</option>
+          </select>
+          <select id="m-bd-year" style="flex:1.2; padding:10px 4px; border:none; background:none; outline:none; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); cursor:pointer;">
+            <option value="">Year</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="modal-section-label">Address</div>
+    <div class="modal-grid-2">
+      <div class="field">
+        <label>House No. / Street</label>
+        <div class="input-wrap"><span class="ico">🏠</span><input type="text" id="m-street" placeholder="123 Rizal St."></div>
+      </div>
+      <div class="field">
+        <label>Province</label>
+        <div class="input-wrap">
+          <span class="ico">🗺</span>
+          <select id="m-sel-prov">
+            <option value="">Loading provinces…</option>
+          </select>
+          <div class="dd-loading" id="m-load-prov"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-grid-2">
+      <div class="field">
+        <label>City / Municipality</label>
+        <div class="input-wrap">
+          <span class="ico">🏙</span>
+          <select id="m-sel-city" disabled>
+            <option value="">Select city/municipality</option>
+          </select>
+          <div class="dd-loading" id="m-load-city"><div class="spinner"></div></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Barangay</label>
+        <div class="input-wrap">
+          <span class="ico">📍</span>
+          <select id="m-sel-brgy" disabled>
+            <option value="">Select barangay</option>
+          </select>
+          <div class="dd-loading" id="m-load-brgy"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="modal-section-label">Set a Password</div>
+    <div class="modal-grid-2">
+      <div class="field" id="mf-pw">
+        <label>Password</label>
+        <div class="input-wrap">
+          <span class="ico">🔒</span>
+          <input type="password" id="m-pw1" placeholder="••••••••">
+          <button type="button" class="toggle-pw" onclick="mTogglePw('m-pw1')">👁</button>
+        </div>
+        <div class="pw-strength"><div class="pw-strength-bar" id="m-pw-bar"></div></div>
+        <span class="err-msg">Minimum 8 characters</span>
+      </div>
+      <div class="field" id="mf-cpw">
+        <label>Confirm Password</label>
+        <div class="input-wrap">
+          <span class="ico">🔒</span>
+          <input type="password" id="m-pw2" placeholder="••••••••">
+          <button type="button" class="toggle-pw" onclick="mTogglePw('m-pw2')">👁</button>
+        </div>
+        <span class="err-msg">Passwords do not match</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-skip" onclick="skipProfile()">Skip for now</button>
+      <button class="btn-primary" id="modal-save-btn" onclick="saveOAuthProfile()">
+        <span>✅</span> Save & Continue
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+  // ── Disable Facebook OAuth until a real App ID is configured ─────────
+  // To enable: register at https://developers.facebook.com, get an App ID,
+  // enable it in Supabase Dashboard → Auth → Providers → Facebook,
+  // then remove the disabled attribute and lines below.
+  (function() {
+    const fbBtn = document.getElementById('btn-fb');
+    if (fbBtn) {
+      fbBtn.disabled = true;
+      fbBtn.style.opacity = '0.45';
+      fbBtn.style.cursor = 'not-allowed';
+      fbBtn.title = 'Facebook login is not yet configured. Contact admin.';
+    }
+  })();
+
+  // ── Guard: prevent double-redirect from getSession + onAuthStateChange ──
+  let _authHandled = false;
+
+  // ── Redirect if already logged in (page load / OAuth return) ──────────
+  (async () => {
+    const { data: { session } } = await _supabase.auth.getSession();
+    if (session) {
+      _authHandled = true;
+      await checkAndHandleOAuthProfile(session.user);
+    }
+  })();
+
+  // ── Listen for OAuth redirect callback ──────────────────────────────
+  // INITIAL_SESSION fires when Supabase exchanges the #access_token fragment
+  // on return from Google/Facebook. SIGNED_IN handles email sign-in.
+  _supabase.auth.onAuthStateChange(async (event, session) => {
+    if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') && session) {
+      if (_authHandled) return; // already handled by getSession() above
+      _authHandled = true;
+      await checkAndHandleOAuthProfile(session.user);
+    }
+  });
+
+  // ── Check if OAuth user has a profile; if not, show modal ───────────
+  async function checkAndHandleOAuthProfile(user) {
+    // Only intercept social (OAuth) logins — not email/password
+    const provider = user?.app_metadata?.provider;
+    if (!provider || provider === 'email') {
+      window.location.href = 'all-tab.html';
+      return;
+    }
+
+    // Check if profile already exists
+    const { data: profile, error } = await _supabase
+      .from('profiles')
+      .select('id, first_name')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (profile && profile.first_name) {
+      // Profile complete — go to app
+      window.location.href = 'all-tab.html';
+    } else {
+      // New OAuth user — show profile completion modal
+      openProfileModal(user);
+    }
+  }
+
+  // ── Password toggle ─────────────────────────────────────────────────
+  function togglePw() {
+    const pw = document.getElementById('pw');
+    pw.type = pw.type === 'password' ? 'text' : 'password';
+  }
+
+  // ── Show alert ──────────────────────────────────────────────────────
+  function showAlert(msg, type = 'error') {
+    const box = document.getElementById('alert-box');
+    const txt = document.getElementById('alert-msg');
+    box.className = `alert alert-${type} show`;
+    txt.textContent = msg;
+  }
+  function hideAlert() {
+    document.getElementById('alert-box').classList.remove('show');
+  }
+
+  // ── Email / Password Sign In ────────────────────────────────────────
+  async function handleSignIn() {
+    hideAlert();
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('pw').value;
+    const btn      = document.getElementById('signin-btn');
+
+    if (!email || !password) {
+      showAlert('Please enter your email and password.');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳</span> Signing in…';
+
+    const { error } = await _supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      showAlert(error.message);
+      btn.disabled = false;
+      btn.innerHTML = '<span>▶</span> Sign in';
+    } else {
+      btn.innerHTML = '<span>✅</span> Redirecting…';
+      window.location.href = 'all-tab.html';
+    }
+  }
+
+  // ── OAuth (Google / Facebook) ────────────────────────────────────────
+  async function handleOAuth(provider) {
+    // Build a clean, reliable redirect URL back to this exact page
+    const redirectTo = window.location.origin + window.location.pathname;
+
+    const { error } = await _supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo,
+        queryParams: {
+          // Google: always show account chooser
+          // Facebook: ignored but harmless
+          prompt: 'select_account',
+        }
+      }
+    });
+    if (error) showAlert(error.message);
+  }
+
+  // ── Sign in on Enter key ────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleSignIn();
+  });
+
+  // ════════════════════════════════════════════════════════════════
+  //  OAUTH PROFILE MODAL
+  // ════════════════════════════════════════════════════════════════
+
+  let _oauthUser = null;
+
+  function openProfileModal(user) {
+    _oauthUser = user;
+
+    // Pre-fill name from OAuth metadata if available
+    const meta = user.user_metadata || {};
+    if (meta.full_name) {
+      const parts = meta.full_name.split(' ');
+      document.getElementById('m-fname').value = parts[0] || '';
+      document.getElementById('m-lname').value = parts.slice(1).join(' ') || '';
+    } else {
+      if (meta.given_name)  document.getElementById('m-fname').value = meta.given_name;
+      if (meta.family_name) document.getElementById('m-lname').value = meta.family_name;
+    }
+
+    document.getElementById('profile-modal').classList.add('show');
+    initModalBirthdate();
+    mLoadProvinces();
+  }
+
+  function closeProfileModal() {
+    document.getElementById('profile-modal').classList.remove('show');
+  }
+
+  function skipProfile() {
+    closeProfileModal();
+    window.location.href = 'all-tab.html';
+  }
+
+  // ── Modal alert ─────────────────────────────────────────────────────
+  function showModalAlert(msg, type = 'error') {
+    const box = document.getElementById('modal-alert');
+    const txt = document.getElementById('modal-alert-msg');
+    box.className = `modal-alert show ${type}`;
+    txt.textContent = msg;
+    box.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+  function hideModalAlert() {
+    document.getElementById('modal-alert').classList.remove('show');
+  }
+
+  // ── Modal password toggle ───────────────────────────────────────────
+  function mTogglePw(id) {
+    const el = document.getElementById(id);
+    el.type = el.type === 'password' ? 'text' : 'password';
+  }
+
+  // Password strength indicator
+  document.addEventListener('DOMContentLoaded', () => {
+    const pw1 = document.getElementById('m-pw1');
+    if (pw1) {
+      pw1.addEventListener('input', function() {
+        const bar = document.getElementById('m-pw-bar');
+        const v = this.value;
+        let strength = 0;
+        if (v.length >= 8) strength++;
+        if (/[A-Z]/.test(v)) strength++;
+        if (/[0-9]/.test(v)) strength++;
+        if (/[^A-Za-z0-9]/.test(v)) strength++;
+        const colors = ['#ef4444','#f97316','#eab308','#22c55e'];
+        const widths = ['25%','50%','75%','100%'];
+        bar.style.width = v.length ? widths[strength-1] || '10%' : '0%';
+        bar.style.background = v.length ? colors[strength-1] || '#ef4444' : '';
+      });
+    }
+  });
+
+  // ── Modal birthdate dropdowns ────────────────────────────────────────
+  function initModalBirthdate() {
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const mSel = document.getElementById('m-bd-month');
+    if (mSel.options.length <= 1) {
+      months.forEach((m,i) => {
+        const o = document.createElement('option');
+        o.value = i+1; o.textContent = m; mSel.appendChild(o);
+      });
+    }
+    mPopulateDays(null, null);
+    const ySel = document.getElementById('m-bd-year');
+    if (ySel.options.length <= 1) {
+      const curY = new Date().getFullYear();
+      for (let y = curY; y >= 1900; y--) {
+        const o = document.createElement('option');
+        o.value = y; o.textContent = y; ySel.appendChild(o);
+      }
+    }
+    mSel.addEventListener('change', () => mPopulateDays(document.getElementById('m-bd-year').value, mSel.value));
+    document.getElementById('m-bd-year').addEventListener('change', function() { mPopulateDays(this.value, mSel.value); });
+  }
+
+  function mPopulateDays(year, month) {
+    const dSel = document.getElementById('m-bd-day');
+    const cur = dSel.value;
+    dSel.innerHTML = '<option value="">Day</option>';
+    const count = (month && year) ? new Date(year, month, 0).getDate() : 31;
+    for (let d = 1; d <= count; d++) {
+      const o = document.createElement('option');
+      o.value = d; o.textContent = d;
+      if (d == cur) o.selected = true;
+      dSel.appendChild(o);
+    }
+  }
+
+  // ── Modal PSGC dropdowns ─────────────────────────────────────────────
+  const PSGC_BASE = 'https://psgc.cloud/api';
+
+  async function psgcGet(url) {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('API error');
+    return r.json();
+  }
+
+  function mLoading(id, show) {
+    document.getElementById('m-load-' + id).classList.toggle('show', show);
+  }
+
+  function mClearSelect(sel, placeholder, disabled = false) {
+    sel.innerHTML = `<option value="">${placeholder}</option>`;
+    sel.disabled = disabled;
+  }
+
+  async function mLoadProvinces() {
+    const pSel = document.getElementById('m-sel-prov');
+    if (pSel.options.length > 1) return; // already loaded
+    mLoading('prov', true);
+    try {
+      const data = await psgcGet(`${PSGC_BASE}/provinces/`);
+      const sorted = data.sort((a,b) => a.name.localeCompare(b.name));
+      pSel.innerHTML = '<option value="">Select province</option>';
+      sorted.forEach(p => {
+        const o = document.createElement('option');
+        o.value = p.code; o.textContent = p.name; pSel.appendChild(o);
+      });
+    } catch(e) {
+      pSel.innerHTML = '<option value="">Could not load provinces</option>';
+    } finally {
+      mLoading('prov', false);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('m-sel-prov').addEventListener('change', async function() {
+      const code = this.value;
+      const cSel = document.getElementById('m-sel-city');
+      mClearSelect(cSel, 'Loading cities…', true);
+      mClearSelect(document.getElementById('m-sel-brgy'), 'Select barangay', true);
+      if (!code) { mClearSelect(cSel, 'Select city/municipality', true); return; }
+      mLoading('city', true);
+      try {
+        const data = await psgcGet(`${PSGC_BASE}/provinces/${code}/cities-municipalities/`);
+        const sorted = data.sort((a,b) => a.name.localeCompare(b.name));
+        cSel.innerHTML = '<option value="">Select city/municipality</option>';
+        sorted.forEach(c => {
+          const o = document.createElement('option');
+          o.value = c.code; o.textContent = c.name; cSel.appendChild(o);
+        });
+        cSel.disabled = false;
+      } catch(e) {
+        cSel.innerHTML = '<option value="">Could not load cities</option>';
+      } finally {
+        mLoading('city', false);
+      }
+    });
+
+    document.getElementById('m-sel-city').addEventListener('change', async function() {
+      const code = this.value;
+      const bSel = document.getElementById('m-sel-brgy');
+      mClearSelect(bSel, 'Loading barangays…', true);
+      if (!code) { mClearSelect(bSel, 'Select barangay', true); return; }
+      mLoading('brgy', true);
+      try {
+        const data = await psgcGet(`${PSGC_BASE}/cities-municipalities/${code}/barangays/`);
+        const sorted = data.sort((a,b) => a.name.localeCompare(b.name));
+        bSel.innerHTML = '<option value="">Select barangay</option>';
+        sorted.forEach(b => {
+          const o = document.createElement('option');
+          o.value = b.code; o.textContent = b.name; bSel.appendChild(o);
+        });
+        bSel.disabled = false;
+      } catch(e) {
+        bSel.innerHTML = '<option value="">Could not load barangays</option>';
+      } finally {
+        mLoading('brgy', false);
+      }
+    });
+  });
+
+  // ── Save OAuth Profile ──────────────────────────────────────────────
+  async function saveOAuthProfile() {
+    hideModalAlert();
+
+    // Validate required fields
+    let valid = true;
+    const reqFields = [
+      { fieldId: 'mf-lname', inputId: 'm-lname',  test: v => v.trim() },
+      { fieldId: 'mf-fname', inputId: 'm-fname',  test: v => v.trim() },
+      { fieldId: 'mf-age',   inputId: 'm-age',    test: v => v && +v > 0 },
+      { fieldId: 'mf-sex',   inputId: 'm-sex',    test: v => v },
+    ];
+    reqFields.forEach(f => {
+      const el = document.getElementById(f.inputId);
+      const ok = f.test(el.value);
+      document.getElementById(f.fieldId).classList.toggle('error', !ok);
+      if (!ok) valid = false;
+    });
+
+    const pw1 = document.getElementById('m-pw1').value;
+    const pw2 = document.getElementById('m-pw2').value;
+    const hasPw = pw1.length > 0 || pw2.length > 0;
+    if (hasPw) {
+      const pwOk = pw1.length >= 8;
+      const cpwOk = pw1 === pw2;
+      document.getElementById('mf-pw').classList.toggle('error', !pwOk);
+      document.getElementById('mf-cpw').classList.toggle('error', !cpwOk);
+      if (!pwOk || !cpwOk) valid = false;
+    }
+
+    if (!valid) {
+      showModalAlert('Please fix the highlighted fields before continuing.');
+      return;
+    }
+
+    const btn = document.getElementById('modal-save-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳</span> Saving…';
+
+    try {
+      const month = document.getElementById('m-bd-month').value;
+      const day   = document.getElementById('m-bd-day').value;
+      const year  = document.getElementById('m-bd-year').value;
+      const bdate = (month && day && year)
+        ? `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`
+        : null;
+
+      const provSel = document.getElementById('m-sel-prov');
+      const citySel = document.getElementById('m-sel-city');
+      const brgySel = document.getElementById('m-sel-brgy');
+      const provText = provSel.options[provSel.selectedIndex]?.text || null;
+      const cityText = citySel.options[citySel.selectedIndex]?.text || null;
+      const brgyText = brgySel.options[brgySel.selectedIndex]?.text || null;
+
+      // Upsert profile
+      const { error: profileError } = await _supabase.from('profiles').upsert({
+        id:             _oauthUser.id,
+        first_name:     document.getElementById('m-fname').value.trim(),
+        last_name:      document.getElementById('m-lname').value.trim(),
+        middle_name:    document.getElementById('m-mname').value.trim() || null,
+        sex:            document.getElementById('m-sex').value || null,
+        birthdate:      bdate,
+        contact:        document.getElementById('m-contact').value.trim() || null,
+        street_address: document.getElementById('m-street').value.trim() || null,
+        province:       provText !== 'Select province' ? provText : null,
+        city:           cityText !== 'Select city/municipality' ? cityText : null,
+        barangay:       brgyText !== 'Select barangay' ? brgyText : null,
+      });
+
+      if (profileError) throw profileError;
+
+      // Update password if provided
+      if (hasPw && pw1.length >= 8) {
+        const { error: pwError } = await _supabase.auth.updateUser({ password: pw1 });
+        if (pwError) console.warn('Password update warning:', pwError.message);
+      }
+
+      btn.innerHTML = '<span>✅</span> Saved!';
+      showModalAlert('Profile saved! Redirecting…', 'success');
+      setTimeout(() => { window.location.href = 'all-tab.html'; }, 1500);
+
+    } catch(err) {
+      showModalAlert(err.message || 'Something went wrong. Please try again.');
+      btn.disabled = false;
+      btn.innerHTML = '<span>✅</span> Save & Continue';
+    }
+  }
+</script>
+</body>
+</html>

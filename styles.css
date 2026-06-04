@@ -1,0 +1,542 @@
+/* =============================================
+   PlateletWatch — styles.css
+   ============================================= */
+
+/* ---------- Reset & Base ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    font-family: 'Lato', sans-serif;
+}
+
+/* ---------- Hero Wrapper ---------- */
+.hero {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    background: radial-gradient(ellipse 120% 100% at 70% 40%,
+            #c43535 0%,
+            #a82020 25%,
+            #851515 50%,
+            #580a0a 75%,
+            #3a0505 100%);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ---------- Background blood cell image ---------- */
+.bg-image-wrap {
+    position: absolute;
+    top: 0;
+    right: -40px;
+    width: 58%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.bg-blood-cells {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+    opacity: 0.9;
+    animation: floatCells 6s ease-in-out infinite;
+}
+
+@keyframes floatCells {
+
+    0%,
+    100% {
+        transform: translateY(0px) scale(1);
+    }
+
+    50% {
+        transform: translateY(-12px) scale(1.08);
+    }
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+    position: relative;
+    z-index: 10;
+    padding: 28px 52px;
+    display: flex;
+    align-items: center;
+}
+
+.logo-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.logo-group:hover {
+    transform: scale(1.04);
+}
+
+.logo-icon {
+    width: 68px;
+    height: 68px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    background: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.logo-group:hover .logo-icon {
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-platelet {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 1.65rem;
+    color: #ffffff;
+    letter-spacing: 0.01em;
+}
+
+.logo-watch {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 1.65rem;
+    color: #e87070;
+    letter-spacing: 0.01em;
+}
+
+.logo-sub {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.75);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-top: 1px;
+}
+
+/* ---------- Hero Content ---------- */
+.hero-content {
+    position: relative;
+    z-index: 10;
+    padding: 0 52px;
+    margin-top: 50px;
+    max-width: 560px;
+    margin-left: 10vw;
+}
+
+/* ---------- Headline ---------- */
+.hero-headline {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    font-size: clamp(2.4rem, 4vw, 3.2rem);
+    line-height: 1.2;
+    color: #ffffff;
+    margin-bottom: 22px;
+}
+
+.hero-headline em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: #f5d5d5;
+}
+
+/* ---------- Description ---------- */
+.hero-desc {
+    font-size: 0.92rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.75;
+    margin-bottom: 32px;
+}
+
+/* ---------- Feature List ---------- */
+.feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    width: fit-content;
+    cursor: default;
+    transition:
+        background 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.25s ease,
+        box-shadow 0.3s ease;
+}
+
+.feature-item:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateX(8px);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* Dots */
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.feature-item:hover .dot {
+    transform: scale(1.4);
+}
+
+.dot-red {
+    background: #e84040;
+    box-shadow: 0 0 6px #e84040;
+}
+
+.dot-yellow {
+    background: #d4c24a;
+    box-shadow: 0 0 6px #d4c24a;
+}
+
+.dot-brown {
+    background: #b87c50;
+    box-shadow: 0 0 6px #b87c50;
+}
+
+.dot-teal {
+    background: #4acfcf;
+    box-shadow: 0 0 6px #4acfcf;
+}
+
+/* ---------- CTA Button ---------- */
+.cta-btn {
+    display: inline-block;
+    padding: 16px 52px;
+    background: #ffffff;
+    color: #1a1a1a;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.25s ease;
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.25);
+}
+
+.cta-btn:hover {
+    background: #f0f0f0;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+}
+
+.cta-btn:active {
+    transform: translateY(0px) scale(0.99);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- Disclaimer ---------- */
+.disclaimer {
+    position: relative;
+    z-index: 10;
+    margin-top: auto;
+    margin-left: 10vw;
+    padding: 0 52px 32px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    max-width: 560px;
+}
+
+.disclaimer-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+    opacity: 0.65;
+}
+
+.disclaimer-text {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.6;
+    font-weight: 300;
+}
+
+
+/* ==============================================
+   TABLET — 768px and below
+   ============================================== */
+@media (max-width: 768px) {
+
+    .hero {
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    /* Blood cells become a faint full-screen backdrop */
+    .bg-image-wrap {
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 55%;
+        opacity: 0.18;
+    }
+
+    .bg-blood-cells {
+        object-position: center top;
+    }
+
+    .navbar {
+        padding: 20px 24px;
+    }
+
+    .logo-icon {
+        width: 54px;
+        height: 54px;
+    }
+
+    .logo-platelet,
+    .logo-watch {
+        font-size: 1.35rem;
+    }
+
+    .logo-sub {
+        font-size: 0.6rem;
+        letter-spacing: 0.15em;
+    }
+
+    .hero-content {
+        margin-left: 0;
+        margin-top: 28px;
+        padding: 0 24px;
+        max-width: 100%;
+    }
+
+    .hero-headline {
+        font-size: clamp(1.9rem, 8vw, 2.6rem);
+    }
+
+    .hero-desc {
+        font-size: 0.88rem;
+    }
+
+    .feature-item {
+        font-size: 0.82rem;
+        padding: 9px 16px;
+        width: 100%;
+    }
+
+    .cta-btn {
+        width: 100%;
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    /* Disclaimer mobile adjustments */
+    .disclaimer {
+        margin-left: 0;
+        margin: 32px 24px 32px;
+        padding: 0;
+        max-width: 100%;
+    }
+}
+
+
+/* ==============================================
+   MOBILE — 480px and below
+   ============================================== */
+@media (max-width: 480px) {
+
+    .hero {
+        background: radial-gradient(ellipse 160% 120% at 80% 20%,
+                #c43535 0%,
+                #a82020 25%,
+                #851515 52%,
+                #580a0a 75%,
+                #3a0505 100%);
+    }
+
+    .bg-image-wrap {
+        height: 40%;
+        opacity: 0.15;
+    }
+
+    .navbar {
+        padding: 18px 20px;
+    }
+
+    .logo-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 10px;
+    }
+
+    .logo-platelet,
+    .logo-watch {
+        font-size: 1.15rem;
+    }
+
+    .logo-sub {
+        font-size: 0.55rem;
+        letter-spacing: 0.12em;
+    }
+
+    .hero-content {
+        margin-top: 20px;
+        padding: 0 20px;
+    }
+
+    .hero-headline {
+        font-size: clamp(1.7rem, 9vw, 2.2rem);
+        margin-bottom: 16px;
+    }
+
+    .hero-desc {
+        font-size: 0.84rem;
+        margin-bottom: 24px;
+    }
+
+    .feature-list {
+        gap: 8px;
+        margin-bottom: 28px;
+    }
+
+    .feature-item {
+        font-size: 0.8rem;
+        padding: 8px 14px;
+        border-radius: 24px;
+    }
+
+    /* disable slide hover on touch */
+    .feature-item:hover {
+        transform: none;
+    }
+
+    .cta-btn {
+        padding: 14px 0;
+        font-size: 0.95rem;
+        border-radius: 12px;
+    }
+
+    .disclaimer {
+        margin: 24px 20px 28px;
+        gap: 10px;
+    }
+
+    .disclaimer-text {
+        font-size: 0.68rem;
+    }
+
+    .disclaimer-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+
+/* ==============================================
+   SMALL MOBILE — 390px and below (iPhone SE, small Androids)
+   ============================================== */
+@media (max-width: 390px) {
+
+    .navbar {
+        padding: 14px 16px;
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+    }
+
+    .logo-platelet,
+    .logo-watch {
+        font-size: 1rem;
+    }
+
+    .logo-sub {
+        font-size: 0.5rem;
+        letter-spacing: 0.1em;
+    }
+
+    .hero-content {
+        margin-top: 14px;
+        padding: 0 16px;
+    }
+
+    .hero-headline {
+        font-size: clamp(1.5rem, 9.5vw, 1.9rem);
+        margin-bottom: 12px;
+    }
+
+    .hero-desc {
+        font-size: 0.8rem;
+        margin-bottom: 20px;
+    }
+
+    .feature-list {
+        gap: 7px;
+        margin-bottom: 22px;
+    }
+
+    .feature-item {
+        font-size: 0.75rem;
+        padding: 7px 12px;
+    }
+
+    .cta-btn {
+        padding: 13px 0;
+        font-size: 0.9rem;
+    }
+
+    .disclaimer {
+        margin: 20px 16px 24px;
+    }
+
+    .disclaimer-text {
+        font-size: 0.63rem;
+    }
+}

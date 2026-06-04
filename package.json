@@ -1,0 +1,16 @@
+{
+  "name": "plateletwatch",
+  "version": "1.0.0",
+  "description": "PlateletWatch — AI-assisted platelet counting dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.3.1",
+    "helmet": "^7.1.0",
+    "node-fetch": "^2.7.0"
+  }
+}

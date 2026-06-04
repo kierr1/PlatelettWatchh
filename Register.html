@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlateletWatch – Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red-deep: #b91c1c;
+    --red-main: #dc2626;
+    --red-mid:  #ef4444;
+    --red-soft: #fca5a5;
+    --red-pale: #fef2f2;
+    --red-panel:#c0392b;
+    --white: #ffffff;
+    --gray-1: #f9f5f5;
+    --gray-2: #e5e0e0;
+    --gray-3: #9c8f8f;
+    --text:    #1a0f0f;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: var(--gray-1);
+    padding: 24px 12px;
+  }
+
+  .card {
+    display: flex;
+    width: 900px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(185,28,28,.18), 0 4px 16px rgba(0,0,0,.08);
+    animation: fadeUp .55s cubic-bezier(.22,1,.36,1) both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(28px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* LEFT PANEL */
+  .panel {
+    width: 280px;
+    flex-shrink: 0;
+    background: linear-gradient(155deg, var(--red-deep) 0%, var(--red-panel) 55%, #7f1d1d 100%);
+    padding: 36px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: visible;
+  }
+  .panel::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(ellipse at 30% 15%, rgba(255,255,255,.12) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .logo-row { display:flex; align-items:center; gap:10px; margin-bottom:auto; }
+  .logo-icon {
+    width:48px; height:48px; border-radius:12px;
+    background:rgba(255,255,255,.18);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px;
+    overflow:hidden;
+  }
+  .logo-icon img {
+    width:100%; height:100%; object-fit:cover; border-radius:12px;
+  }
+  .logo-text { color:var(--white); }
+  .logo-text strong { font-size:17px; font-weight:700; display:block; }
+  .logo-text strong span { color:var(--red-soft); }
+  .logo-text small { font-size:9.5px; letter-spacing:.12em; opacity:.75; text-transform:uppercase; }
+
+  .panel-headline { color:var(--white); margin: 28px 0 10px; line-height:1.2; }
+  .panel-headline em {
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:400;
+    font-size:28px; display:block;
+  }
+  .panel-headline strong { font-size:22px; font-weight:700; display:block; }
+  .panel-sub { color:rgba(255,255,255,.72); font-size:12px; line-height:1.55; margin-bottom:20px; }
+  .features { list-style:none; display:flex; flex-direction:column; gap:7px; margin-bottom:24px; }
+  .features li {
+    color:rgba(255,255,255,.88); font-size:11.5px;
+    display:flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,.09); border-radius:20px; padding:6px 11px;
+  }
+  .features li::before { content:'●'; color:var(--red-soft); font-size:7px; flex-shrink:0; }
+  .disclaimer {
+    background:rgba(255,220,100,.12); border-radius:10px; padding:10px 11px;
+    color:rgba(255,255,255,.65); font-size:10px; line-height:1.5;
+    display:flex; gap:7px; margin-top:auto;
+    flex-shrink:0; overflow:visible; word-break:break-word;
+  }
+  .disclaimer span { font-size:13px; flex-shrink:0; }
+  .disclaimer span:last-child { font-size:10px; flex-shrink:1; min-width:0; }
+
+  /* RIGHT FORM */
+  .form-side {
+    flex:1; background:var(--white);
+    padding:32px 36px 28px;
+    display:flex; flex-direction:column;
+    position:relative; overflow-y:auto;
+  }
+  .back-btn {
+    position:absolute; top:16px; right:20px;
+    background:none; border:none; cursor:pointer;
+    color:var(--red-main); font-size:18px;
+    width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+    border-radius:50%; transition: background .2s;
+  }
+  .back-btn:hover { background:var(--red-pale); }
+
+  .form-title { font-size:24px; font-weight:700; color:var(--text); margin-bottom:2px; }
+  .form-sub   { font-size:12.5px; color:var(--gray-3); margin-bottom:18px; }
+
+  .tab-row {
+    display:flex; background:var(--red-pale); border-radius:30px;
+    padding:4px; margin-bottom:22px;
+  }
+  .tab {
+    flex:1; text-align:center; padding:8px;
+    border-radius:26px; font-size:13px; font-weight:500;
+    cursor:pointer; border:none; background:none;
+    color:var(--gray-3); transition: all .25s;
+    text-decoration:none; display:block; line-height:1;
+  }
+  .tab.active { background:var(--white); color:var(--red-main); box-shadow:0 2px 8px rgba(0,0,0,.1); }
+
+  /* GRID */
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .grid-1 { margin-bottom:12px; }
+
+  .field label {
+    display:block; font-size:10.5px; font-weight:600;
+    letter-spacing:.07em; text-transform:uppercase;
+    color:var(--gray-3); margin-bottom:5px;
+  }
+  .input-wrap {
+    display:flex; align-items:center;
+    border:1.5px solid var(--gray-2);
+    border-radius:9px; background:var(--red-pale);
+    transition: border-color .2s, box-shadow .2s;
+    overflow:hidden;
+  }
+  .input-wrap:focus-within {
+    border-color:var(--red-main);
+    box-shadow: 0 0 0 3px rgba(220,38,38,.1);
+  }
+  .input-wrap .ico { padding:0 10px; color:var(--red-soft); font-size:14px; flex-shrink:0; }
+  .input-wrap input, .input-wrap select {
+    flex:1; border:none; background:none; outline:none;
+    font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text);
+    padding:10px 0; min-width:0;
+  }
+  .input-wrap select { padding:10px 8px 10px 0; cursor:pointer; }
+  .input-wrap input::placeholder { color:var(--gray-3); }
+  .toggle-pw {
+    background:none; border:none; cursor:pointer;
+    padding:0 10px; color:var(--gray-3); font-size:14px;
+    transition: color .2s;
+  }
+  .toggle-pw:hover { color:var(--red-main); }
+
+  /* loading spinner for dropdowns */
+  .dd-loading { display:none; padding:0 10px; }
+  .dd-loading.show { display:block; }
+  .spinner {
+    width:14px; height:14px; border-radius:50%;
+    border:2px solid var(--red-soft);
+    border-top-color:var(--red-main);
+    animation: spin .6s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  .terms-row {
+    display:flex; align-items:flex-start; gap:8px;
+    margin-bottom:16px; font-size:12px; color:var(--gray-3);
+  }
+  .terms-row input { accent-color:var(--red-main); margin-top:2px; flex-shrink:0; }
+  .terms-row a { color:var(--red-main); font-weight:600; text-decoration:none; }
+  .terms-row a:hover { text-decoration:underline; }
+
+  .btn-primary {
+    width:100%; padding:12px;
+    background:linear-gradient(135deg, var(--red-main), var(--red-deep));
+    color:var(--white); border:none; border-radius:10px;
+    font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600;
+    cursor:pointer; letter-spacing:.03em;
+    display:flex; align-items:center; justify-content:center;
+    transition: opacity .2s, transform .15s;
+    box-shadow: 0 4px 14px rgba(220,38,38,.35);
+    margin-bottom:12px;
+  }
+  .btn-primary:hover { opacity:.92; transform:translateY(-1px); }
+  .btn-primary:active { transform:translateY(0); }
+
+  .bottom-note { text-align:center; font-size:12px; color:var(--gray-3); }
+  .bottom-note a { color:var(--red-main); font-weight:600; text-decoration:none; }
+  .bottom-note a:hover { text-decoration:underline; }
+
+  /* validation */
+  .field.error .input-wrap { border-color:var(--red-main); }
+  .field .err-msg { font-size:10px; color:var(--red-main); margin-top:3px; display:none; }
+  .field.error .err-msg { display:block; }
+
+  @media(max-width:700px){
+    body { padding:12px 8px; }
+    .card { flex-direction:column; width:100%; }
+    .panel { width:100%; padding:22px 18px; }
+    .form-side { padding:24px 18px; }
+    .grid-3, .grid-2 { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <!-- LEFT PANEL -->
+  <div class="panel">
+    <div class="logo-row">
+      <div class="logo-icon"><img src="pics/pic2.png" alt="PlateletWatch Logo"></div>
+      <div class="logo-text">
+        <strong>Platelet<span>Watch</span></strong>
+        <small>Dengue Early Detection</small>
+      </div>
+    </div>
+    <div class="panel-headline">
+      <em>Monitor Platelets.</em>
+      <strong>Detect Risks Early.</strong>
+    </div>
+    <p class="panel-sub">A microscope-integrated web application that supports early dengue detection through platelet count analysis from blood samples.</p>
+    <ul class="features">
+      <li>Real-time platelet count tracking</li>
+      <li>Automated dengue risk stratification</li>
+      <li>AI-assisted blood analysis</li>
+      <li>Secure patient data management</li>
+    </ul>
+    <div class="disclaimer">
+      <span>⚠️</span>
+      <span>Disclaimer: This system is intended for early screening and detection purposes only. It does not replace professional medical diagnosis, treatment, or consultation.</span>
+    </div>
+  </div>
+
+  <!-- RIGHT FORM -->
+  <div class="form-side">
+    <button class="back-btn" onclick="history.back()" title="Go back">←</button>
+
+    <h1 class="form-title">Create your account</h1>
+    <p class="form-sub">Fill in the details below to register.</p>
+
+    <div class="tab-row">
+      <a href="signin.html" class="tab">Sign In</a>
+      <a href="register.html" class="tab active">Register</a>
+    </div>
+
+    <form id="regForm" onsubmit="handleSubmit(event)" novalidate>
+
+      <!-- Name -->
+      <div class="grid-3">
+        <div class="field" id="f-lname">
+          <label>Last Name</label>
+          <div class="input-wrap"><span class="ico">👤</span><input type="text" name="lname" placeholder="dela Cruz" required></div>
+          <span class="err-msg">Required</span>
+        </div>
+        <div class="field" id="f-fname">
+          <label>First Name</label>
+          <div class="input-wrap"><span class="ico">👤</span><input type="text" name="fname" placeholder="Juan" required></div>
+          <span class="err-msg">Required</span>
+        </div>
+        <div class="field">
+          <label>Middle Name</label>
+          <div class="input-wrap"><span class="ico">👤</span><input type="text" name="mname" placeholder="Santos"></div>
+        </div>
+      </div>
+
+      <!-- Address line 1 -->
+      <div class="grid-2">
+        <div class="field">
+          <label>House No. / Street</label>
+          <div class="input-wrap"><span class="ico">🏠</span><input type="text" name="street" placeholder="123 Rizal St."></div>
+        </div>
+        <div class="field" id="f-brgy">
+          <label>Barangay</label>
+          <div class="input-wrap">
+            <span class="ico">📍</span>
+            <select id="sel-brgy" name="barangay" disabled>
+              <option value="">Select barangay</option>
+            </select>
+            <div class="dd-loading" id="load-brgy"><div class="spinner"></div></div>
+          </div>
+          <span class="err-msg">Select a barangay</span>
+        </div>
+      </div>
+
+      <!-- Province / City -->
+      <div class="grid-2">
+        <div class="field" id="f-city">
+          <label>City / Municipality</label>
+          <div class="input-wrap">
+            <span class="ico">🏙</span>
+            <select id="sel-city" name="city" disabled>
+              <option value="">Select city/municipality</option>
+            </select>
+            <div class="dd-loading" id="load-city"><div class="spinner"></div></div>
+          </div>
+          <span class="err-msg">Select a city</span>
+        </div>
+        <div class="field" id="f-prov">
+          <label>Province</label>
+          <div class="input-wrap">
+            <span class="ico">🗺</span>
+            <select id="sel-prov" name="province">
+              <option value="">Loading provinces…</option>
+            </select>
+            <div class="dd-loading" id="load-prov"><div class="spinner"></div></div>
+          </div>
+          <span class="err-msg">Select a province</span>
+        </div>
+      </div>
+
+      <!-- Age / Sex / Contact / Birthdate -->
+      <div class="grid-2">
+        <div class="field" id="f-age">
+          <label>Age</label>
+          <div class="input-wrap"><span class="ico">#</span><input type="number" name="age" min="1" max="120" placeholder="e.g. 25" required></div>
+          <span class="err-msg">Please enter a valid age</span>
+        </div>
+        <div class="field">
+          <label>Sex</label>
+          <div class="input-wrap">
+            <span class="ico">⚥</span>
+            <select name="sex">
+              <option value="">Select sex</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Contact Number</label>
+          <div class="input-wrap"><span class="ico">📞</span><input type="tel" name="contact" placeholder="09XX XXX XXXX"></div>
+        </div>
+        <div class="field" id="f-bdate">
+          <label>Birth Date</label>
+          <div class="input-wrap" style="gap:2px;">
+            <span class="ico">📅</span>
+            <select id="bd-month" name="bd_month" style="flex:1.4; padding:10px 4px;">
+              <option value="">Month</option>
+            </select>
+            <select id="bd-day" name="bd_day" style="flex:1; padding:10px 4px;">
+              <option value="">Day</option>
+            </select>
+            <select id="bd-year" name="bd_year" style="flex:1.2; padding:10px 4px;">
+              <option value="">Year</option>
+            </select>
+          </div>
+          <span class="err-msg">Select complete birthdate</span>
+        </div>
+      </div>
+
+      <!-- Credentials -->
+      <div class="grid-1">
+        <div class="field" id="f-email">
+          <label>Email Address</label>
+          <div class="input-wrap"><span class="ico">✉</span><input type="email" name="email" placeholder="juan@email.com" required></div>
+          <span class="err-msg">Enter a valid email</span>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field" id="f-pw">
+          <label>Password</label>
+          <div class="input-wrap">
+            <span class="ico">🔒</span>
+            <input type="password" id="pw1" name="password" placeholder="••••••••" required>
+            <button type="button" class="toggle-pw" onclick="togglePw('pw1',this)">👁</button>
+          </div>
+          <span class="err-msg">Minimum 8 characters</span>
+        </div>
+        <div class="field" id="f-cpw">
+          <label>Confirm Password</label>
+          <div class="input-wrap">
+            <span class="ico">🔒</span>
+            <input type="password" id="pw2" name="confirm_password" placeholder="••••••••" required>
+            <button type="button" class="toggle-pw" onclick="togglePw('pw2',this)">👁</button>
+          </div>
+          <span class="err-msg">Passwords do not match</span>
+        </div>
+      </div>
+
+      <!-- Terms -->
+      <div class="terms-row">
+        <input type="checkbox" id="terms" required>
+        <label for="terms">
+          I agree to the <a href="#">Terms and Services</a> and <a href="#">Privacy Policy</a>.
+          Patient data will be handled per the Data Privacy Act of 2012 (RA 10173).
+        </label>
+      </div>
+
+      <button type="submit" class="btn-primary">Create account</button>
+    </form>
+
+    <p class="bottom-note">Already have an account? <a href="signin.html">Sign in here</a></p>
+  </div>
+</div>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.config.js"></script>
+
+<script>
+// ── BIRTHDATE DROPDOWNS ──────────────────────────────────────────────
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const mSel = document.getElementById('bd-month');
+months.forEach((m,i) => { const o=document.createElement('option'); o.value=i+1; o.textContent=m; mSel.appendChild(o); });
+
+function populateDays(year, month) {
+  const dSel = document.getElementById('bd-day');
+  const cur = dSel.value;
+  dSel.innerHTML = '<option value="">Day</option>';
+  const count = (month && year) ? new Date(year, month, 0).getDate() : 31;
+  for(let d=1; d<=count; d++) { const o=document.createElement('option'); o.value=d; o.textContent=d; if(d==cur) o.selected=true; dSel.appendChild(o); }
+}
+populateDays(null,null);
+
+const ySel = document.getElementById('bd-year');
+const curY = new Date().getFullYear();
+for(let y=curY; y>=1900; y--) { const o=document.createElement('option'); o.value=y; o.textContent=y; ySel.appendChild(o); }
+
+mSel.addEventListener('change', () => populateDays(ySel.value, mSel.value));
+ySel.addEventListener('change', () => populateDays(ySel.value, mSel.value));
+
+// ── PSGC API (Philippine Standard Geographic Code) ────────────────────
+const BASE = 'https://psgc.cloud/api';
+
+async function apiGet(url) {
+  const r = await fetch(url);
+  if(!r.ok) throw new Error('API error');
+  return r.json();
+}
+
+function loading(id, show) {
+  document.getElementById('load-'+id).classList.toggle('show', show);
+}
+
+function clearSelect(sel, placeholder, disabled=false) {
+  sel.innerHTML = `<option value="">${placeholder}</option>`;
+  sel.disabled = disabled;
+}
+
+async function loadProvinces() {
+  loading('prov', true);
+  const pSel = document.getElementById('sel-prov');
+  try {
+    const data = await apiGet(`${BASE}/provinces/`);
+    const sorted = data.sort((a,b)=>a.name.localeCompare(b.name));
+    pSel.innerHTML = '<option value="">Select province</option>';
+    sorted.forEach(p => {
+      const o = document.createElement('option');
+      o.value = p.code;
+      o.textContent = p.name;
+      pSel.appendChild(o);
+    });
+  } catch(e) {
+    pSel.innerHTML = '<option value="">Could not load provinces</option>';
+  } finally {
+    loading('prov', false);
+  }
+}
+
+document.getElementById('sel-prov').addEventListener('change', async function() {
+  const code = this.value;
+  const cSel = document.getElementById('sel-city');
+  clearSelect(cSel, 'Loading cities…', true);
+  clearSelect(document.getElementById('sel-brgy'), 'Select barangay', true);
+  if(!code) { clearSelect(cSel,'Select city/municipality',true); return; }
+  loading('city', true);
+  try {
+    const data = await apiGet(`${BASE}/provinces/${code}/cities-municipalities/`);
+    const sorted = data.sort((a,b)=>a.name.localeCompare(b.name));
+    cSel.innerHTML = '<option value="">Select city/municipality</option>';
+    sorted.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.code;
+      o.textContent = c.name;
+      cSel.appendChild(o);
+    });
+    cSel.disabled = false;
+  } catch(e) {
+    cSel.innerHTML = '<option value="">Could not load cities</option>';
+  } finally {
+    loading('city', false);
+  }
+});
+
+document.getElementById('sel-city').addEventListener('change', async function() {
+  const code = this.value;
+  const bSel = document.getElementById('sel-brgy');
+  clearSelect(bSel, 'Loading barangays…', true);
+  if(!code) { clearSelect(bSel,'Select barangay',true); return; }
+  loading('brgy', true);
+  try {
+    const data = await apiGet(`${BASE}/cities-municipalities/${code}/barangays/`);
+    const sorted = data.sort((a,b)=>a.name.localeCompare(b.name));
+    bSel.innerHTML = '<option value="">Select barangay</option>';
+    sorted.forEach(b => {
+      const o = document.createElement('option');
+      o.value = b.code;
+      o.textContent = b.name;
+      bSel.appendChild(o);
+    });
+    bSel.disabled = false;
+  } catch(e) {
+    bSel.innerHTML = '<option value="">Could not load barangays</option>';
+  } finally {
+    loading('brgy', false);
+  }
+});
+
+// init
+loadProvinces();
+
+// ── PASSWORD TOGGLE ──────────────────────────────────────────────────
+function togglePw(id, btn) {
+  const el = document.getElementById(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+// ── FORM SUBMIT ───────────────────────────────────────────────────────
+async function handleSubmit(e) {
+  e.preventDefault();
+  let valid = true;
+
+  // Client-side validation
+  const checks = [
+    { id:'f-lname', el:e.target.lname,    test: v=>v.trim() },
+    { id:'f-fname', el:e.target.fname,    test: v=>v.trim() },
+    { id:'f-email', el:e.target.email,    test: v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+    { id:'f-pw',    el:e.target.password, test: v=>v.length>=8 },
+    { id:'f-age',   el:e.target.age,      test: v=>v && +v > 0 && +v <= 120 },
+  ];
+  checks.forEach(c => {
+    const ok = c.test(c.el.value);
+    document.getElementById(c.id).classList.toggle('error', !ok);
+    if(!ok) valid=false;
+  });
+
+  const pw1 = document.getElementById('pw1').value;
+  const pw2 = document.getElementById('pw2').value;
+  const cpwOk = pw1===pw2 && pw2.length>0;
+  document.getElementById('f-cpw').classList.toggle('error', !cpwOk);
+  if(!cpwOk) valid=false;
+
+  if(!document.getElementById('terms').checked) {
+    valid=false;
+    showAlert('Please agree to the Terms and Services to continue.');
+  }
+
+  if(!valid) return;
+
+  // Disable button and show loading state
+  const btn = document.querySelector('.btn-primary[type=submit]');
+  btn.disabled = true;
+  btn.textContent = '⏳ Creating account…';
+
+  const form   = e.target;
+  const email  = form.email.value.trim();
+  const month  = form.bd_month.value;
+  const day    = form.bd_day.value;
+  const year   = form.bd_year.value;
+  const bdate  = (month && day && year)
+                   ? `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`
+                   : null;
+
+  // ── 1. Create auth user ──────────────────────────────────────────────
+  const { data: authData, error: authError } = await _supabase.auth.signUp({
+    email,
+    password: pw1,
+    options: {
+      data: {
+        first_name: form.fname.value.trim(),
+        last_name:  form.lname.value.trim(),
+      }
+    }
+  });
+
+  if (authError) {
+    showAlert(authError.message);
+    btn.disabled = false;
+    btn.textContent = 'Create account';
+    return;
+  }
+
+  const userId = authData.user?.id;
+
+  // ── 2. Insert profile row ────────────────────────────────────────────
+  if (userId) {
+    const { error: profileError } = await _supabase.from('profiles').insert({
+      id:             userId,
+      first_name:     form.fname.value.trim(),
+      last_name:      form.lname.value.trim(),
+      middle_name:    form.mname?.value?.trim() || null,
+      sex:            form.sex.value || null,
+      birthdate:      bdate,
+      contact:        form.contact?.value?.trim() || null,
+      street_address: form.street?.value?.trim() || null,
+      province:       document.getElementById('sel-prov').options[document.getElementById('sel-prov').selectedIndex]?.text || null,
+      city:           document.getElementById('sel-city').options[document.getElementById('sel-city').selectedIndex]?.text || null,
+      barangay:       document.getElementById('sel-brgy').options[document.getElementById('sel-brgy').selectedIndex]?.text || null,
+    });
+
+    if (profileError) {
+      // Auth user was created but profile failed — log and continue
+      console.warn('Profile insert warning:', profileError.message);
+    }
+  }
+
+  // ── 3. Done ──────────────────────────────────────────────────────────
+  btn.textContent = '✅ Account created!';
+  showAlert(
+    'Account created! Please check your email to confirm your address, then sign in.',
+    'success'
+  );
+  setTimeout(() => { window.location.href = 'signin.html'; }, 3000);
+}
+
+// ── ALERT HELPER ──────────────────────────────────────────────────────
+function showAlert(msg, type='error') {
+  // Reuse error styling; add a success style if needed
+  const existing = document.getElementById('reg-alert');
+  if (existing) existing.remove();
+  const div = document.createElement('div');
+  div.id = 'reg-alert';
+  const colors = type==='success'
+    ? 'background:#f0fdf4;border:1px solid #86efac;color:#166534;'
+    : 'background:#fef2f2;border:1px solid #fca5a5;color:#b91c1c;';
+  div.style.cssText = `${colors}padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;`;
+  div.textContent = msg;
+  const form = document.getElementById('regForm');
+  form.insertAdjacentElement('beforebegin', div);
+  div.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+</script>
+</body>
+</html>
