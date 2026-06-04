@@ -1258,10 +1258,9 @@ body{background-image:radial-gradient(var(--warm-gray) 1px,transparent 1px);back
 <script>
 
 // ── Config — update these if your server runs on a different host/port ──
-const INFERENCE_URL      = window.location.hostname === 'localhost'
-  ? 'http://localhost:8000'
-  : 'http://' + window.location.hostname + ':8000';   // works from phone on same network
-const OPENROUTER_API_KEY = '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';
+// Always use the same origin — Render proxies everything through /api/
+const INFERENCE_URL      = window.location.origin;
+const OPENROUTER_API_KEY = null; // handled server-side, never expose in frontend
 
 // ── Microscope Feed (shared camera stream) ────────────────────────────
 let _feedStream = null;
