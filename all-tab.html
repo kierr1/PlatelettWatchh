@@ -986,6 +986,7 @@ body{background-image:radial-gradient(var(--warm-gray) 1px,transparent 1px);back
           <thead>
             <tr>
               <th>Date &amp; Time</th>
+              <th style="text-align:center;">Platelet Image</th>
               <th style="text-align:center;">Platelet Count</th>
               <th style="text-align:center;">Status</th>
               <th style="text-align:center;">Action</th>
@@ -1883,7 +1884,7 @@ function renderHistory() {
   const tbody = document.getElementById("history-body");
   if (!tbody) return;
   if (historyRows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:28px 0;font-size:13px;">No records found for this date.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px 0;font-size:13px;">No records found for this date.</td></tr>`;
     return;
   }
   tbody.innerHTML = historyRows.map((r, i) => {
@@ -1901,7 +1902,7 @@ function renderHistory() {
     <tr>
       <td>${formatHistoryDate(r.date)}&nbsp;&nbsp;${r.time}</td>
       ${thumbCell}
-      <td style="text-align:center;">${r.count}</td>
+      <td style="text-align:center;font-weight:600;color:var(--text-dark);">${r.count ? r.count.toLocaleString() : '—'} <span style="font-size:10px;font-weight:400;color:var(--text-muted);">/µL</span></td>
       <td style="text-align:center;"><span style="${getStatusStyle(r.level)}">${r.status}</span></td>
       <td style="text-align:center;">
         <button onclick="deleteHistoryRow(${i})" aria-label="Delete record"
