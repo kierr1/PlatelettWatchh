@@ -746,12 +746,36 @@ body{background-image:radial-gradient(var(--warm-gray) 1px,transparent 1px);back
               <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--text-dark);">Microscope Feed</div>
               <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Cellphone microscope · Real-time platelet detection via AI</div>
             </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+            <!-- Camera Toggle Button -->
+            <button id="btn-camera-toggle" onclick="toggleDashboardCamera()" aria-label="Toggle camera" style="display:flex;align-items:center;gap:6px;background:var(--success-light);border:1px solid #86efac;border-radius:100px;padding:4px 12px;font-size:10px;font-weight:600;color:var(--success);cursor:pointer;font-family:'Poppins',sans-serif;transition:all .22s;">
+              <span id="camera-toggle-dot" style="width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;animation:pulse 1.5s infinite;"></span>
+              <span id="camera-toggle-label">Camera ON</span>
+            </button>
+            <!-- Auto-detect Toggle -->
+            <button id="btn-autodetect-toggle" onclick="toggleAutoDetect()" aria-label="Toggle auto-detection" style="display:flex;align-items:center;gap:6px;background:var(--teal-light);border:1px solid rgba(13,115,119,.3);border-radius:100px;padding:4px 12px;font-size:10px;font-weight:600;color:var(--teal);cursor:pointer;font-family:'Poppins',sans-serif;transition:all .22s;">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" id="autodetect-icon"><circle cx="5" cy="5" r="3.5"/><circle cx="5" cy="5" r="1.5" fill="currentColor" stroke="none"/></svg>
+              <span id="autodetect-label">Auto-detect: ON</span>
+            </button>
             <button onclick="openFeedModal()" aria-label="Open full view floating modal" style="display:flex;align-items:center;background:var(--white);border:1px solid var(--warm-gray);border-radius:100px;padding:4px 12px;gap:6px;font-size:10px;font-weight:600;color:var(--text-mid);cursor:pointer;font-family:'Poppins',sans-serif;transition:all .18s;" onmouseover="this.style.borderColor='var(--crimson)';this.style.color='var(--crimson)'" onmouseout="this.style.borderColor='var(--warm-gray)';this.style.color='var(--text-mid)'">
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 1h3.5M1 1v3.5M10 1H6.5M10 1v3.5M1 10h3.5M1 10V6.5M10 10H6.5M10 10V6.5"/></svg>
               Full view
             </button>
           </div>
-          <div class="scope-full-feed" id="mini-feed-box" onclick="openFeedModal()" style="cursor:pointer;" title="Click to open full view">
+          </div>
+          <div style="position:relative;">
+          <!-- Auto-detect status overlay -->
+          <div id="autodetect-overlay" style="position:absolute;top:0;left:0;right:0;z-index:20;pointer-events:none;display:none;">
+            <div id="autodetect-status-bar" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(10,13,20,.72);backdrop-filter:blur(6px);">
+              <span id="autodetect-status-dot" style="width:7px;height:7px;border-radius:50%;background:#00e5c4;flex-shrink:0;"></span>
+              <span id="autodetect-status-text" style="font-size:11px;color:rgba(255,255,255,.85);font-family:'Poppins',sans-serif;font-weight:500;">Watching for stable frame…</span>
+              <div id="autodetect-progress-wrap" style="flex:1;height:3px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden;margin-left:4px;">
+                <div id="autodetect-progress-bar" style="height:3px;background:#00e5c4;border-radius:3px;width:0%;transition:width .1s linear;"></div>
+              </div>
+            </div>
+          </div>
+          <canvas id="mini-realtime-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:10;display:none;"></canvas>
+          <div class="scope-full-feed" id="mini-feed-box" onclick="openFeedModal()" style="cursor:pointer;position:relative;" title="Click to open full view">
             <div class="scan-line" id="mini-scan-line"></div>
             <div class="scope-tags" id="mini-scope-tags">
               <div class="scope-tag live" id="mini-live-tag">● STARTING…</div>
@@ -765,6 +789,7 @@ body{background-image:radial-gradient(var(--warm-gray) 1px,transparent 1px);back
               <span id="mini-feed-msg">Click to start camera</span>
             </div>
           </div>
+          </div><!-- /mini-feed-wrapper -->
           <!-- ★ MINI FEED STATS ROW -->
           <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--warm-gray);">
             <div style="padding:13px 15px;border-right:1px solid var(--warm-gray);"><div id="dash-stat-platelets" style="color:#00b5a0;font-family:'Playfair Display',serif;font-size:19px;">—</div><div style="font-size:10px;color:var(--text-muted);margin:2px 0 7px;">Platelets</div><div style="background:rgba(0,229,196,.25);height:4px;border-radius:100px;"><div id="dash-bar-platelets" style="width:0%;height:4px;border-radius:100px;background:#00e5c4;transition:width .5s ease;"></div></div></div>
@@ -1258,8 +1283,10 @@ body{background-image:radial-gradient(var(--warm-gray) 1px,transparent 1px);back
 <script>
 
 // ── Config — update these if your server runs on a different host/port ──
-const INFERENCE_URL      = window.location.origin;
-const OPENROUTER_API_KEY = null; // key is stored server-side in Render env vars
+const INFERENCE_URL      = window.location.hostname === 'localhost'
+  ? 'http://localhost:8000'
+  : 'http://' + window.location.hostname + ':8000';   // works from phone on same network
+const OPENROUTER_API_KEY = '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';
 
 // ── Microscope Feed (shared camera stream) ────────────────────────────
 let _feedStream = null;
@@ -1749,9 +1776,9 @@ async function sendChat() {
   const typingEl = appendMsg('bot', '⋯ thinking…', true, false);
 
   try {
-    const res = await fetch('/api/chat', {
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + OPENROUTER_API_KEY },
       body: JSON.stringify({
         model: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
         messages: [
@@ -3029,6 +3056,356 @@ document.addEventListener('mousedown', function(e) {
     setTimeout(animateBars, 200);
   };
 })();
+
+
+// ══════════════════════════════════════════════════════════════
+// ★ CAMERA TOGGLE & REAL-TIME AUTO-DETECTION
+// ══════════════════════════════════════════════════════════════
+
+let _cameraEnabled = true;
+let _autoDetectEnabled = true;
+let _autoDetectTimer = null;
+let _autoDetectCountdown = null;
+let _motionCheckInterval = null;
+let _lastFrameData = null;
+let _stableFrameCount = 0;
+let _isAnalyzing = false;
+const AUTO_DETECT_STABLE_SECONDS = 3;   // seconds of stillness before triggering
+const AUTO_DETECT_MOTION_THRESHOLD = 18; // pixel diff threshold (0-255)
+const AUTO_DETECT_COOLDOWN_MS = 8000;   // min ms between auto-analyses
+let _lastAutoDetectTime = 0;
+
+// ── Toggle camera on/off ─────────────────────────────────────
+function toggleDashboardCamera() {
+  const btn   = document.getElementById('btn-camera-toggle');
+  const dot   = document.getElementById('camera-toggle-dot');
+  const label = document.getElementById('camera-toggle-label');
+  _cameraEnabled = !_cameraEnabled;
+  if (_cameraEnabled) {
+    // Turn ON
+    btn.style.background    = 'var(--success-light)';
+    btn.style.borderColor   = '#86efac';
+    btn.style.color         = 'var(--success)';
+    dot.style.background    = 'var(--success)';
+    dot.style.animation     = 'pulse 1.5s infinite';
+    label.textContent       = 'Camera ON';
+    startMicroscopeFeed();
+    if (_autoDetectEnabled) startMotionWatch();
+  } else {
+    // Turn OFF
+    btn.style.background    = 'var(--danger-light)';
+    btn.style.borderColor   = '#fecaca';
+    btn.style.color         = 'var(--danger)';
+    dot.style.background    = 'var(--danger)';
+    dot.style.animation     = 'none';
+    label.textContent       = 'Camera OFF';
+    stopMicroscopeFeed();
+    stopMotionWatch();
+    hideAutoDetectOverlay();
+    clearRealtimeCanvas();
+  }
+}
+
+// ── Toggle auto-detect on/off ────────────────────────────────
+function toggleAutoDetect() {
+  const btn   = document.getElementById('btn-autodetect-toggle');
+  const label = document.getElementById('autodetect-label');
+  _autoDetectEnabled = !_autoDetectEnabled;
+  if (_autoDetectEnabled) {
+    btn.style.background  = 'var(--teal-light)';
+    btn.style.borderColor = 'rgba(13,115,119,.3)';
+    btn.style.color       = 'var(--teal)';
+    label.textContent     = 'Auto-detect: ON';
+    if (_cameraEnabled) startMotionWatch();
+  } else {
+    btn.style.background  = 'var(--off-white)';
+    btn.style.borderColor = 'var(--warm-gray)';
+    btn.style.color       = 'var(--text-muted)';
+    label.textContent     = 'Auto-detect: OFF';
+    stopMotionWatch();
+    hideAutoDetectOverlay();
+  }
+}
+
+// ── Motion detection helpers ─────────────────────────────────
+function getFrameSample(video, sampleW, sampleH) {
+  const c = document.createElement('canvas');
+  c.width = sampleW; c.height = sampleH;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(video, 0, 0, sampleW, sampleH);
+  return ctx.getImageData(0, 0, sampleW, sampleH).data;
+}
+
+function frameMotion(a, b) {
+  if (!a || !b || a.length !== b.length) return 999;
+  let diff = 0;
+  const step = 4 * 8; // sample every 8th pixel for speed
+  let count = 0;
+  for (let i = 0; i < a.length; i += step) {
+    diff += Math.abs(a[i] - b[i]) + Math.abs(a[i+1] - b[i+1]) + Math.abs(a[i+2] - b[i+2]);
+    count++;
+  }
+  return count > 0 ? diff / count : 999;
+}
+
+// ── Start/stop motion watcher ────────────────────────────────
+function startMotionWatch() {
+  stopMotionWatch();
+  _stableFrameCount = 0;
+  _lastFrameData = null;
+  const video = document.getElementById('mini-feed-video');
+  if (!video) return;
+
+  showAutoDetectOverlay();
+  setAutoDetectStatus('watching', 'Watching for stable frame…', 0);
+
+  _motionCheckInterval = setInterval(() => {
+    if (!video.videoWidth || _isAnalyzing) return;
+    const now = Date.now();
+    const sample = getFrameSample(video, 160, 120);
+    const motion = frameMotion(_lastFrameData, sample);
+    _lastFrameData = sample;
+
+    if (motion > AUTO_DETECT_MOTION_THRESHOLD) {
+      // Movement detected — reset
+      _stableFrameCount = 0;
+      setAutoDetectStatus('watching', 'Motion detected — stabilizing…', 0);
+      clearRealtimeCanvas();
+    } else {
+      // Stable
+      _stableFrameCount++;
+      const pct = Math.min(100, (_stableFrameCount / (AUTO_DETECT_STABLE_SECONDS * 5)) * 100);
+      setAutoDetectStatus('stable', `Stable — analyzing in ${Math.max(0, AUTO_DETECT_STABLE_SECONDS - Math.floor(_stableFrameCount / 5)).toFixed(0)}s…`, pct);
+
+      if (_stableFrameCount >= AUTO_DETECT_STABLE_SECONDS * 5) {
+        // Enough stable frames — trigger analysis if cooldown passed
+        if (now - _lastAutoDetectTime > AUTO_DETECT_COOLDOWN_MS) {
+          _stableFrameCount = 0;
+          _lastAutoDetectTime = now;
+          runRealtimeAnalysis(video);
+        } else {
+          const remaining = ((AUTO_DETECT_COOLDOWN_MS - (now - _lastAutoDetectTime)) / 1000).toFixed(0);
+          setAutoDetectStatus('cooldown', `Cooldown — next scan in ${remaining}s`, 100);
+        }
+      }
+    }
+  }, 200); // check 5x per second
+}
+
+function stopMotionWatch() {
+  if (_motionCheckInterval) { clearInterval(_motionCheckInterval); _motionCheckInterval = null; }
+  _stableFrameCount = 0;
+  _lastFrameData = null;
+}
+
+// ── Auto-detect overlay UI ───────────────────────────────────
+function showAutoDetectOverlay() {
+  const el = document.getElementById('autodetect-overlay');
+  if (el) el.style.display = 'block';
+}
+function hideAutoDetectOverlay() {
+  const el = document.getElementById('autodetect-overlay');
+  if (el) el.style.display = 'none';
+}
+
+function setAutoDetectStatus(state, text, pct) {
+  const dot  = document.getElementById('autodetect-status-dot');
+  const txt  = document.getElementById('autodetect-status-text');
+  const prog = document.getElementById('autodetect-progress-bar');
+  if (!dot || !txt || !prog) return;
+  const colors = { watching:'rgba(255,255,255,.5)', stable:'#00e5c4', analyzing:'#fbbf24', cooldown:'#f87171', done:'#4ade80' };
+  dot.style.background  = colors[state] || '#ccc';
+  dot.style.animation   = state === 'analyzing' ? 'pulse 0.5s infinite' : (state === 'stable' ? 'pulse 1s infinite' : 'none');
+  txt.textContent       = text;
+  prog.style.width      = pct + '%';
+  prog.style.background = colors[state] || '#00e5c4';
+}
+
+// ── Real-time analysis from live feed ───────────────────────
+async function runRealtimeAnalysis(video) {
+  if (_isAnalyzing) return;
+  _isAnalyzing = true;
+  setAutoDetectStatus('analyzing', '⚙ Running AI analysis…', 100);
+
+  try {
+    // Capture current frame as base64
+    const captureCanvas = document.createElement('canvas');
+    captureCanvas.width  = video.videoWidth;
+    captureCanvas.height = video.videoHeight;
+    const ctx = captureCanvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+
+    const base64 = captureCanvas.toDataURL('image/jpeg', 0.88).split(',')[1];
+    const selectedZoom = (document.querySelector('input[name="zoom-select"]:checked') || {}).value || '40x';
+
+    // Call Render API
+    const response = await fetch('/api/analyze-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: base64, mediaType: 'image/jpeg', zoom: selectedZoom }),
+      signal: AbortSignal.timeout(60000)
+    });
+
+    if (!response.ok) throw new Error('API error ' + response.status);
+    const result = await response.json();
+
+    const platelets  = parseInt(result.platelets)  || 0;
+    const rbc        = parseInt(result.rbc)         || 0;
+    const wbc        = parseInt(result.wbc)         || 0;
+    const estPerUl   = parseInt(result.est_per_ul)  || platelets * 500;
+    const severity   = result.severity || 'UNKNOWN';
+    const detections = result.detections || [];
+
+    // Draw annotations on the realtime canvas overlay
+    drawRealtimeBoxes(video, detections);
+
+    // Update dashboard stats
+    currentAnalysisResult = { platelets, rbc, wbc, estPerUl, severity };
+    updateDashboardStats();
+
+    // Update stat bars
+    document.getElementById('dash-stat-platelets').textContent = platelets;
+    document.getElementById('dash-stat-rbc').textContent       = rbc.toLocaleString();
+    document.getElementById('dash-stat-wbc').textContent       = wbc;
+    document.getElementById('dash-stat-estul').textContent     = estPerUl >= 1000 ? (estPerUl/1000).toFixed(0)+'k' : estPerUl;
+    document.getElementById('dash-bar-platelets').style.width  = Math.min(100,(platelets/120)*100).toFixed(1)+'%';
+    document.getElementById('dash-bar-rbc').style.width        = Math.min(100,(rbc/1500)*100).toFixed(1)+'%';
+    document.getElementById('dash-bar-wbc').style.width        = Math.min(100,(wbc/20)*100).toFixed(1)+'%';
+    document.getElementById('dash-bar-estul').style.width      = Math.min(100,(estPerUl/400000)*100).toFixed(1)+'%';
+
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    setAutoDetectStatus('done', `✓ ${platelets} platelets · ${rbc} RBC · ${estPerUl.toLocaleString()}/µL — ${timeStr}`, 100);
+
+    // After 4s, reset to watching
+    setTimeout(() => {
+      if (_autoDetectEnabled && _cameraEnabled) {
+        setAutoDetectStatus('watching', 'Watching for stable frame…', 0);
+      }
+    }, 4000);
+
+  } catch(err) {
+    console.warn('Realtime analysis error:', err.message);
+    setAutoDetectStatus('watching', 'Analysis failed — retrying…', 0);
+  } finally {
+    _isAnalyzing = false;
+  }
+}
+
+// ── Draw annotation boxes on the realtime canvas ─────────────
+function drawRealtimeBoxes(video, detections) {
+  const canvas = document.getElementById('mini-realtime-canvas');
+  if (!canvas) return;
+
+  const container = document.getElementById('mini-feed-box');
+  canvas.style.display = 'block';
+
+  // Match canvas to container size
+  const cw = container.clientWidth  || video.videoWidth  || 640;
+  const ch = container.clientHeight || video.videoHeight || 360;
+  canvas.width  = cw;
+  canvas.height = ch;
+
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, cw, ch);
+
+  if (!detections || detections.length === 0) return;
+
+  // Account for video letterboxing
+  const natW = video.videoWidth  || cw;
+  const natH = video.videoHeight || ch;
+  const scale = Math.min(cw / natW, ch / natH);
+  const renderedW = natW * scale;
+  const renderedH = natH * scale;
+  const offsetX = (cw - renderedW) / 2;
+  const offsetY = (ch - renderedH) / 2;
+  const scaleX = renderedW / natW;
+  const scaleY = renderedH / natH;
+
+  const colors   = { Platelet: '#00e5c4', RBC: '#f87171', WBC: '#fbbf24' };
+  const bgColors = { Platelet: 'rgba(0,229,196,0.15)', RBC: 'rgba(248,113,113,0.1)', WBC: 'rgba(251,191,36,0.1)' };
+
+  let pIdx = 0;
+  detections.forEach(det => {
+    const [x1, y1, x2, y2] = det.bbox;
+    const sx1 = offsetX + x1 * scaleX;
+    const sy1 = offsetY + y1 * scaleY;
+    const sw  = (x2 - x1) * scaleX;
+    const sh  = (y2 - y1) * scaleY;
+    const color   = colors[det.class_name]   || '#fff';
+    const bgColor = bgColors[det.class_name] || 'rgba(255,255,255,.08)';
+
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(sx1, sy1, sw, sh);
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth   = det.class_name === 'Platelet' ? 2 : 1.5;
+    ctx.strokeRect(sx1, sy1, sw, sh);
+
+    if (det.class_name === 'Platelet') {
+      pIdx++;
+      const label = `P${pIdx}`;
+      const fs    = Math.max(9, Math.round(cw * 0.018));
+      ctx.font = `bold ${fs}px Poppins, Arial`;
+      const tw = ctx.measureText(label).width + 5;
+      const lh = fs + 5;
+      ctx.fillStyle = color;
+      ctx.fillRect(sx1, sy1 - lh, tw, lh);
+      ctx.fillStyle = '#0a0d14';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, sx1 + 2.5, sy1 - lh / 2);
+    }
+  });
+
+  // Legend
+  const items = [{ l:'Platelet', c:colors.Platelet }, { l:'RBC', c:colors.RBC }, { l:'WBC', c:colors.WBC }];
+  const lfs = Math.max(9, Math.round(cw * 0.016));
+  let llx = cw - 80, lly = 8;
+  items.forEach(item => {
+    ctx.fillStyle = 'rgba(10,13,20,0.75)';
+    ctx.fillRect(llx, lly, 72, lfs + 8);
+    ctx.fillStyle = item.c;
+    ctx.fillRect(llx + 5, lly + 4, lfs * 0.7, lfs * 0.7);
+    ctx.fillStyle = '#fff'; ctx.font = `${lfs * 0.85}px Arial`;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText(item.l, llx + 5 + lfs * 0.7 + 5, lly + 4);
+    lly += lfs + 10;
+  });
+}
+
+function clearRealtimeCanvas() {
+  const canvas = document.getElementById('mini-realtime-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// ── Override startMicroscopeFeed to auto-start motion watch ──
+const _origStartFeed = startMicroscopeFeed;
+startMicroscopeFeed = async function() {
+  await _origStartFeed();
+  // Give camera 1.5s to stabilize then start motion watch
+  if (_autoDetectEnabled && _cameraEnabled) {
+    setTimeout(() => startMotionWatch(), 1500);
+  }
+};
+
+// ── Override stopMicroscopeFeed to stop motion watch too ──────
+const _origStopFeed = stopMicroscopeFeed;
+stopMicroscopeFeed = function() {
+  _origStopFeed();
+  stopMotionWatch();
+  hideAutoDetectOverlay();
+  clearRealtimeCanvas();
+};
+
+// Start auto-detect when page loads if camera starts on dashboard
+setTimeout(() => {
+  if (_autoDetectEnabled && _cameraEnabled) {
+    const video = document.getElementById('mini-feed-video');
+    if (video && video.srcObject) startMotionWatch();
+  }
+}, 2000);
 
 </script>
 </body>
