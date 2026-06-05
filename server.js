@@ -94,7 +94,7 @@ app.get('/api/test', async (req, res) => {
 const INFERENCE_URL = process.env.INFERENCE_URL || 'http://localhost:8000';
 
 app.post('/api/analyze-image', aiLimiter, async (req, res) => {
-  const { image, mediaType } = req.body;
+  const { image, mediaType, zoom, confidence } = req.body;
 
   if (!image || typeof image !== 'string') {
     return res.status(400).json({ error: 'Missing or invalid image data.' });
@@ -124,7 +124,7 @@ app.post('/api/analyze-image', aiLimiter, async (req, res) => {
     const response = await fetch(`${INFERENCE_URL}/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image, confidence: 0.15 }),
+      body: JSON.stringify({ image, confidence: confidence || 0.15, zoom: zoom || '100x' }),
       signal: AbortSignal.timeout(60000), // 60s timeout — HF free tier needs time to wake
     });
 
@@ -140,16 +140,22 @@ app.post('/api/analyze-image', aiLimiter, async (req, res) => {
     const platelets = data.platelets  || 0;
     const rbc       = data.rbc        || 0;
     const wbc       = data.wbc        || 0;
-    const estPerUl  = data.est_per_ul || platelets * 500;
+    const estPerUl  = data.est_per_ul || 0;
     const severity  = data.severity   || 'UNKNOWN';
 
     res.json({
       platelets,
       rbc,
       wbc,
-      est_per_ul:  estPerUl,
+      est_per_ul:     estPerUl,
       severity,
-      detections:  data.detections || [],
+      severity_label: data.severity_label || '',
+      severity_color: data.severity_color || '',
+      clinical_note:  data.clinical_note  || '',
+      zoom:           data.zoom           || zoom || '100x',
+      zoom_note:      data.zoom_note      || '',
+      calib_factor:   data.calib_factor   || 100000,
+      detections:     data.detections     || [],
       note: data.note || (platelets > 0
         ? `YOLOv8 detected ${platelets} platelet(s) in this field of view.`
         : `No platelets detected. Try a clearer 40×–100× image or adjust microscope focus.`),
