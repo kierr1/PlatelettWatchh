@@ -886,18 +886,12 @@ body{background-image:radial-gradient(var(--warm-gray) 1px,transparent 1px);back
           <div style="flex:1;min-width:0;">
             <div style="font-size:11px;font-weight:600;color:#7A5200;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Microscope Objective (Zoom)</div>
             <div style="display:flex;gap:7px;flex-wrap:wrap;">
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:#7A5200;font-weight:500;">
-                <input type="radio" name="zoom-select" value="10x" style="accent-color:#C9830A;"> 10×<span style="font-size:10px;color:#a07030;font-weight:400;">· Scout</span>
-              </label>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:#7A5200;font-weight:500;">
-                <input type="radio" name="zoom-select" value="40x" checked style="accent-color:#C9830A;"> 40×<span style="font-size:10px;color:#a07030;font-weight:400;">· Standard HPF</span>
-              </label>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:#7A5200;font-weight:500;">
-                <input type="radio" name="zoom-select" value="100x" style="accent-color:#C9830A;"> 100×<span style="font-size:10px;color:#a07030;font-weight:400;">· Oil Immersion</span>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:#0F6E56;font-weight:600;">
+                <input type="radio" name="zoom-select" value="100x" checked style="accent-color:#0F6E56;"> 100×<span style="font-size:10px;color:#0F6E56;font-weight:500;">· Oil Immersion (required)</span>
               </label>
             </div>
           </div>
-          <div id="zoom-factor-badge" style="font-size:10px;color:#7A5200;background:rgba(201,131,10,.12);border:1px solid rgba(201,131,10,.25);border-radius:4px;padding:3px 8px;white-space:nowrap;">×15,000 factor</div>
+          <div id="zoom-factor-badge" style="font-size:10px;color:#0F6E56;background:rgba(15,110,86,.1);border:1px solid rgba(15,110,86,.25);border-radius:4px;padding:3px 8px;white-space:nowrap;">×15,000 factor</div>
         </div>
         <div class="upload-controls">
           <button class="btn-outline" onclick="document.getElementById('image-file-input').click()" aria-label="Upload image from local device">
@@ -1093,20 +1087,13 @@ body{background-image:radial-gradient(var(--warm-gray) 1px,transparent 1px);back
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
         <!-- Zoom selector for full view -->
-        <div style="display:flex;align-items:center;gap:6px;background:#FDF3E0;border:1px solid #f5c842;border-radius:100px;padding:4px 12px;">
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="#C9830A" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4.5"/><circle cx="5.5" cy="5.5" r="2"/><line x1="5.5" y1="1" x2="5.5" y2="2.5"/><line x1="5.5" y1="8.5" x2="5.5" y2="10"/><line x1="1" y1="5.5" x2="2.5" y2="5.5"/><line x1="8.5" y1="5.5" x2="10" y2="5.5"/></svg>
-          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:10px;color:#7A5200;font-weight:600;">
-            <input type="radio" name="modal-zoom-select" value="10x" style="accent-color:#C9830A;width:10px;height:10px;"> 10×
+        <div style="display:flex;align-items:center;gap:6px;background:#E8F5EE;border:1px solid rgba(15,110,86,.3);border-radius:100px;padding:4px 12px;">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="#0F6E56" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4.5"/><circle cx="5.5" cy="5.5" r="2"/><line x1="5.5" y1="1" x2="5.5" y2="2.5"/><line x1="5.5" y1="8.5" x2="5.5" y2="10"/><line x1="1" y1="5.5" x2="2.5" y2="5.5"/><line x1="8.5" y1="5.5" x2="10" y2="5.5"/></svg>
+          <label style="display:flex;align-items:center;gap:4px;font-size:10px;color:#0F6E56;font-weight:700;">
+            <input type="radio" name="modal-zoom-select" value="100x" checked style="accent-color:#0F6E56;width:10px;height:10px;"> 100× Oil Immersion
           </label>
-          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:10px;color:#7A5200;font-weight:600;">
-            <input type="radio" name="modal-zoom-select" value="40x" checked style="accent-color:#C9830A;width:10px;height:10px;"> 40×
-          </label>
-          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:10px;color:#7A5200;font-weight:600;">
-            <input type="radio" name="modal-zoom-select" value="100x" style="accent-color:#C9830A;width:10px;height:10px;"> 100×
-          </label>
-          <span id="modal-zoom-badge" style="font-size:9px;color:#7A5200;background:rgba(201,131,10,.15);border-radius:4px;padding:2px 6px;white-space:nowrap;">×15,000</span>
+          <span id="modal-zoom-badge" style="font-size:9px;color:#0F6E56;background:rgba(15,110,86,.12);border-radius:4px;padding:2px 6px;white-space:nowrap;">×15,000</span>
         </div>
-        <!-- Auto-detect toggle for full view -->
         <button id="btn-modal-autodetect" onclick="toggleModalAutoDetect()" style="display:flex;align-items:center;gap:5px;background:var(--teal-light);border:1px solid rgba(13,115,119,.3);border-radius:100px;padding:4px 10px;font-size:10px;font-weight:600;color:var(--teal);cursor:pointer;font-family:'Poppins',sans-serif;transition:all .22s;">
           <span id="modal-autodetect-dot" style="width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 1.5s infinite;display:inline-block;"></span>
           <span id="modal-autodetect-label">Auto-detect: ON</span>
@@ -2129,6 +2116,26 @@ function fileToBase64(file) {
   });
 }
 
+// ── Zoom-aware est/µL calculation ────────────────────────────────────
+// Platelet estimation from a blood smear is ONLY clinically valid at
+// 100× oil immersion (1000× total magnification).
+// Formula: avg platelets per field × 15,000 = est. platelets/µL
+// Reference: standard hematology practice (MLO, eClinpath, PubMed 15999911)
+const PLATELET_MULTIPLIER = 15000; // valid only at 100× oil immersion
+function calcEstPerUl(platelets, zoom) {
+  if (zoom !== '100x') return null; // not valid at other objectives
+  return platelets * PLATELET_MULTIPLIER;
+}
+function isValidZoomForCount(zoom) { return zoom === '100x'; }
+function calcSeverity(estPerUl) {
+  if (estPerUl >= 400000) return 'HIGH';
+  if (estPerUl >= 150000) return 'NORMAL';
+  if (estPerUl >=  50000) return 'LOW';
+  if (estPerUl >=  20000) return 'DANGER';
+  if (estPerUl >       0) return 'CRITICAL';
+  return 'UNKNOWN';
+}
+
 function displayAnalysisResult(platelets, rbc, wbc, estPerUl, severity, note, zoomLabel) {
   const sevColors = {
     NORMAL:  '#16a34a', LOW:     '#d97706',
@@ -2271,6 +2278,15 @@ async function countPlatelets() {
     showErrorModal('No Image Uploaded', 'Please upload or capture a microscope image first before running the analysis.');
     return;
   }
+  // Guard: platelet estimation is only valid at 100× oil immersion
+  const selectedZoom = (document.querySelector('input[name="zoom-select"]:checked') || {}).value || '100x';
+  if (!isValidZoomForCount(selectedZoom)) {
+    showErrorModal(
+      'Wrong Objective Selected',
+      'Platelet counting requires the 100× oil immersion objective (1000× total magnification).\n\nThe ×15,000 multiplication factor used to estimate platelets/µL is only validated at 100× oil immersion. Please switch your microscope to 100× and select it above before running the count.'
+    );
+    return;
+  }
   const btn = document.getElementById('btn-count-platelets');
   btn.disabled = true;
   btn.innerHTML = SPINNER_BTN;
@@ -2295,8 +2311,6 @@ async function countPlatelets() {
   try {
     const base64Data = await fileToBase64(currentImageFile);
     const mediaType = currentImageFile.type || 'image/jpeg';
-    // Read selected zoom from radio buttons
-    const selectedZoom = (document.querySelector('input[name="zoom-select"]:checked') || {}).value || '40x';
     const response = await fetch('/api/analyze-image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -2311,10 +2325,10 @@ async function countPlatelets() {
     const platelets = parseInt(result.platelets)  || 0;
     const rbc       = parseInt(result.rbc)         || 0;
     const wbc       = parseInt(result.wbc)         || 0;
-    const estPerUl  = parseInt(result.est_per_ul)  || platelets * 500;
-    const severity  = ['NORMAL','LOW','DANGER','CRITICAL','DANGER','HIGH','UNKNOWN'].includes(result.severity) ? result.severity : 'UNKNOWN';
+    const estPerUl  = platelets > 0 ? calcEstPerUl(platelets, selectedZoom) : 0;
+    const severity  = calcSeverity(estPerUl);
     const note      = result.note || '';
-    const zoomLabel = result.zoom || selectedZoom;
+    const zoomLabel = selectedZoom;
     const detections = result.detections || [];
 
     // Draw bounding boxes on the preview image
@@ -2982,19 +2996,8 @@ function updatePlateletChart() {
    ★ NEW ENHANCEMENT JS
    ═══════════════════════════════════════════════════════════ */
 
-// ── Zoom selector badge updater ──────────────────────────────────────
-(function() {
-  const ZOOM_FACTORS = { '10x': '×1,000 factor', '40x': '×15,000 factor', '100x': '×100,000 factor' };
-  function updateZoomBadge() {
-    const sel = document.querySelector('input[name="zoom-select"]:checked');
-    const badge = document.getElementById('zoom-factor-badge');
-    if (sel && badge) badge.textContent = ZOOM_FACTORS[sel.value] || '';
-  }
-  document.addEventListener('change', function(e) {
-    if (e.target && e.target.name === 'zoom-select') updateZoomBadge();
-  });
-  setTimeout(updateZoomBadge, 200);
-})();
+// ── Zoom is fixed at 100× oil immersion ─────────────────────────────
+// 10× and 40× options removed — platelet estimation is only valid at 100×.
 
 
 (function() {
@@ -3270,7 +3273,14 @@ async function runRealtimeAnalysis(video) {
     ctx.drawImage(video, 0, 0);
 
     const base64 = captureCanvas.toDataURL('image/jpeg', 0.88).split(',')[1];
-    const selectedZoom = (document.querySelector('input[name="zoom-select"]:checked') || {}).value || '40x';
+    const selectedZoom = (document.querySelector('input[name="zoom-select"]:checked') || {}).value || '100x';
+
+    // If not on 100× oil immersion, skip count and warn
+    if (!isValidZoomForCount(selectedZoom)) {
+      setAutoDetectStatus('watching', '⚠ Switch to 100× oil immersion to count platelets', 0);
+      _isAnalyzing = false;
+      return;
+    }
 
     // Call Render API
     const response = await fetch('/api/analyze-image', {
@@ -3286,8 +3296,8 @@ async function runRealtimeAnalysis(video) {
     const platelets  = parseInt(result.platelets)  || 0;
     const rbc        = parseInt(result.rbc)         || 0;
     const wbc        = parseInt(result.wbc)         || 0;
-    const estPerUl   = parseInt(result.est_per_ul)  || platelets * 500;
-    const severity   = result.severity || 'UNKNOWN';
+    const estPerUl   = platelets > 0 ? (calcEstPerUl(platelets, selectedZoom) || 0) : 0;
+    const severity   = calcSeverity(estPerUl);
     const detections = result.detections || [];
 
     // Draw annotations on the realtime canvas overlay
@@ -3453,19 +3463,8 @@ let _modalStableCount = 0;
 let _modalIsAnalyzing = false;
 let _lastModalAutoDetectTime = 0;
 
-// ── Zoom badge updater for modal ──────────────────────────────
-(function() {
-  const ZOOM_FACTORS = { '10x':'×1,000', '40x':'×15,000', '100x':'×100,000' };
-  const ZOOM_LABELS  = { '10x':'10× Magnification', '40x':'40× Magnification', '100x':'100× Magnification' };
-  document.addEventListener('change', function(e) {
-    if (e.target && e.target.name === 'modal-zoom-select') {
-      const badge = document.getElementById('modal-zoom-badge');
-      const tag   = document.getElementById('modal-zoom-tag');
-      if (badge) badge.textContent = ZOOM_FACTORS[e.target.value] || '';
-      if (tag)   tag.textContent   = ZOOM_LABELS[e.target.value]  || '';
-    }
-  });
-})();
+// ── Modal zoom is fixed at 100× oil immersion ─────────────────────────
+function handleModalZoomChange() { /* no-op: only 100× remains */ }
 
 // ── Toggle modal auto-detect ──────────────────────────────────
 function toggleModalAutoDetect() {
@@ -3574,7 +3573,14 @@ async function runModalRealtimeAnalysis(video) {
     c.width = video.videoWidth; c.height = video.videoHeight;
     c.getContext('2d').drawImage(video, 0, 0);
     const base64 = c.toDataURL('image/jpeg', 0.88).split(',')[1];
-    const selectedZoom = (document.querySelector('input[name="modal-zoom-select"]:checked') || {}).value || '40x';
+    const selectedZoom = (document.querySelector('input[name="modal-zoom-select"]:checked') || {}).value || '100x';
+
+    // If not on 100× oil immersion, skip and warn
+    if (!isValidZoomForCount(selectedZoom)) {
+      setModalAutoDetectStatus('watching', '⚠ Switch to 100× oil immersion to count platelets', 0);
+      _modalIsAnalyzing = false;
+      return;
+    }
 
     const response = await fetch('/api/analyze-image', {
       method: 'POST',
@@ -3588,8 +3594,8 @@ async function runModalRealtimeAnalysis(video) {
     const platelets  = parseInt(result.platelets)  || 0;
     const rbc        = parseInt(result.rbc)         || 0;
     const wbc        = parseInt(result.wbc)         || 0;
-    const estPerUl   = parseInt(result.est_per_ul)  || platelets * 500;
-    const severity   = result.severity || 'UNKNOWN';
+    const estPerUl   = platelets > 0 ? (calcEstPerUl(platelets, selectedZoom) || 0) : 0;
+    const severity   = calcSeverity(estPerUl);
     const detections = result.detections || [];
 
     // Draw on modal canvas
@@ -3689,11 +3695,9 @@ function drawModalRealtimeBoxes(video, detections) {
 const _origOpenFeedModal = openFeedModal;
 openFeedModal = function() {
   _origOpenFeedModal();
-  // Sync zoom badge on open
-  const badge = document.getElementById('modal-zoom-badge');
-  const tag   = document.getElementById('modal-zoom-tag');
-  if (badge) badge.textContent = '×15,000';
-  if (tag)   tag.textContent   = '40× Magnification';
+  // Set zoom tag to 100× oil immersion (only valid objective)
+  const tag = document.getElementById('modal-zoom-tag');
+  if (tag) tag.textContent = '100× Oil Immersion';
   // Start modal motion watch after camera stabilizes
   if (_modalAutoDetectEnabled) {
     setTimeout(() => {
