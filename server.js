@@ -103,13 +103,20 @@ app.post('/api/analyze-image', aiLimiter, async (req, res) => {
     return res.status(413).json({ error: 'Image too large. Please use an image under 6 MB.' });
   }
 
-  // Check inference server is reachable first
-  try {
-    const health = await fetch(`${INFERENCE_URL}/health`, { signal: AbortSignal.timeout(10000) });
-    if (!health.ok) throw new Error('Inference server not healthy');
-  } catch {
+  // Check inference server is reachable — retry up to 3x to handle HF Space cold starts
+  let hfReady = false;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const health = await fetch(`${INFERENCE_URL}/health`, { signal: AbortSignal.timeout(15000) });
+      if (health.ok) { hfReady = true; break; }
+    } catch {
+      console.log(`Health check attempt ${attempt}/3 failed. Retrying...`);
+      if (attempt < 3) await new Promise(r => setTimeout(r, 5000)); // wait 5s before retry
+    }
+  }
+  if (!hfReady) {
     return res.status(503).json({
-      error: 'YOLOv8 inference server is not running. Start it with: python inference_server.py'
+      error: 'Inference server is waking up. Please wait 20–30 seconds and try again.'
     });
   }
 
