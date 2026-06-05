@@ -1090,7 +1090,26 @@ body{background-image:radial-gradient(var(--warm-gray) 1px,transparent 1px);back
         <div class="feed-modal-title">Microscope Feed — Full View</div>
         <div class="feed-modal-sub">Cellphone microscope · Real-time platelet detection via AI</div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <!-- Zoom selector for full view -->
+        <div style="display:flex;align-items:center;gap:6px;background:#FDF3E0;border:1px solid #f5c842;border-radius:100px;padding:4px 12px;">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="#C9830A" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4.5"/><circle cx="5.5" cy="5.5" r="2"/><line x1="5.5" y1="1" x2="5.5" y2="2.5"/><line x1="5.5" y1="8.5" x2="5.5" y2="10"/><line x1="1" y1="5.5" x2="2.5" y2="5.5"/><line x1="8.5" y1="5.5" x2="10" y2="5.5"/></svg>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:10px;color:#7A5200;font-weight:600;">
+            <input type="radio" name="modal-zoom-select" value="10x" style="accent-color:#C9830A;width:10px;height:10px;"> 10×
+          </label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:10px;color:#7A5200;font-weight:600;">
+            <input type="radio" name="modal-zoom-select" value="40x" checked style="accent-color:#C9830A;width:10px;height:10px;"> 40×
+          </label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:10px;color:#7A5200;font-weight:600;">
+            <input type="radio" name="modal-zoom-select" value="100x" style="accent-color:#C9830A;width:10px;height:10px;"> 100×
+          </label>
+          <span id="modal-zoom-badge" style="font-size:9px;color:#7A5200;background:rgba(201,131,10,.15);border-radius:4px;padding:2px 6px;white-space:nowrap;">×15,000</span>
+        </div>
+        <!-- Auto-detect toggle for full view -->
+        <button id="btn-modal-autodetect" onclick="toggleModalAutoDetect()" style="display:flex;align-items:center;gap:5px;background:var(--teal-light);border:1px solid rgba(13,115,119,.3);border-radius:100px;padding:4px 10px;font-size:10px;font-weight:600;color:var(--teal);cursor:pointer;font-family:'Poppins',sans-serif;transition:all .22s;">
+          <span id="modal-autodetect-dot" style="width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 1.5s infinite;display:inline-block;"></span>
+          <span id="modal-autodetect-label">Auto-detect: ON</span>
+        </button>
         <div class="feed-modal-connected">
           <span style="width:5px;height:5px;background:#dc2626;border-radius:50%;animation:pulse 1s infinite;display:inline-block;"></span>
           Device connected
@@ -1099,18 +1118,32 @@ body{background-image:radial-gradient(var(--warm-gray) 1px,transparent 1px);back
       </div>
     </div>
     <div class="feed-modal-body">
-      <div class="scope-full-feed modal-feed" id="modal-feed-box">
-        <div class="scan-line"></div>
-        <div class="scope-tags">
-          <div class="scope-tag live" id="modal-live-tag">● LIVE FEED</div>
-          <div class="scope-tag">AI Detection: ON</div>
-          <div class="scope-tag">40× Magnification</div>
-          <div class="scope-tag" id="modal-frame-tag">Frame: 00:00:00</div>
+      <div style="position:relative;">
+        <!-- Modal auto-detect status overlay -->
+        <div id="modal-autodetect-overlay" style="position:absolute;top:0;left:0;right:0;z-index:20;pointer-events:none;display:none;">
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(10,13,20,.72);backdrop-filter:blur(6px);">
+            <span id="modal-autodetect-status-dot" style="width:7px;height:7px;border-radius:50%;background:#00e5c4;flex-shrink:0;"></span>
+            <span id="modal-autodetect-status-text" style="font-size:11px;color:rgba(255,255,255,.85);font-family:'Poppins',sans-serif;font-weight:500;">Watching for stable frame…</span>
+            <div style="flex:1;height:3px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden;margin-left:4px;">
+              <div id="modal-autodetect-progress-bar" style="height:3px;background:#00e5c4;border-radius:3px;width:0%;transition:width .1s linear;"></div>
+            </div>
+          </div>
         </div>
-        <video id="modal-feed-video" autoplay playsinline muted style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;"></video>
-        <div id="modal-feed-placeholder" style="display:flex;flex-direction:column;align-items:center;gap:12px;color:rgba(255,255,255,.4);font-size:13px;">
-          <svg width="44" height="44" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="18" cy="18" r="7"/><path d="M2 12V10C2 7.791 3.791 6 6 6H10L13 2H23L26 6H30C32.209 6 34 7.791 34 10V26C34 28.209 32.209 30 30 30H6C3.791 30 2 28.209 2 26V16"/></svg>
-          <span id="modal-feed-msg">Starting camera…</span>
+        <!-- Realtime annotation canvas -->
+        <canvas id="modal-realtime-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:10;display:none;"></canvas>
+        <div class="scope-full-feed modal-feed" id="modal-feed-box">
+          <div class="scan-line"></div>
+          <div class="scope-tags">
+            <div class="scope-tag live" id="modal-live-tag">● LIVE FEED</div>
+            <div class="scope-tag">AI Detection: ON</div>
+            <div class="scope-tag" id="modal-zoom-tag">40× Magnification</div>
+            <div class="scope-tag" id="modal-frame-tag">Frame: 00:00:00</div>
+          </div>
+          <video id="modal-feed-video" autoplay playsinline muted style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;"></video>
+          <div id="modal-feed-placeholder" style="display:flex;flex-direction:column;align-items:center;gap:12px;color:rgba(255,255,255,.4);font-size:13px;">
+            <svg width="44" height="44" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="18" cy="18" r="7"/><path d="M2 12V10C2 7.791 3.791 6 6 6H10L13 2H23L26 6H30C32.209 6 34 7.791 34 10V26C34 28.209 32.209 30 30 30H6C3.791 30 2 28.209 2 26V16"/></svg>
+            <span id="modal-feed-msg">Starting camera…</span>
+          </div>
         </div>
       </div>
       <!-- ★ NEW: Full-view modal capture/export toolbar -->
@@ -1127,12 +1160,12 @@ body{background-image:radial-gradient(var(--warm-gray) 1px,transparent 1px);back
         </button>
         <span class="fc-status" id="modal-capture-status"></span>
       </div>
-      <!-- Stats row -->
+      <!-- Stats row — live updating -->
       <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--warm-gray);">
-        <div style="padding:13px 15px;border-right:1px solid var(--warm-gray);"><div style="color:#00b5a0;font-family:'Playfair Display',serif;font-size:19px;">47</div><div style="font-size:10px;color:var(--text-muted);margin:2px 0 7px;">Platelets</div><div style="background:rgba(0,229,196,.25);height:4px;border-radius:100px;"><div style="width:13%;height:4px;border-radius:100px;background:#00e5c4;"></div></div></div>
-        <div style="padding:13px 15px;border-right:1px solid var(--warm-gray);"><div style="color:#f87171;font-family:'Playfair Display',serif;font-size:19px;">1,237</div><div style="font-size:10px;color:var(--text-muted);margin:2px 0 7px;">Red Blood Cells</div><div style="background:rgba(248,113,113,.2);height:4px;border-radius:100px;"><div style="width:88%;height:4px;border-radius:100px;background:#f87171;"></div></div></div>
-        <div style="padding:13px 15px;border-right:1px solid var(--warm-gray);"><div style="color:#fbbf24;font-family:'Playfair Display',serif;font-size:19px;">3</div><div style="font-size:10px;color:var(--text-muted);margin:2px 0 7px;">White Blood Cells</div><div style="background:rgba(251,191,36,.2);height:4px;border-radius:100px;"><div style="width:5%;height:4px;border-radius:100px;background:#fbbf24;"></div></div></div>
-        <div style="padding:13px 15px;"><div style="color:#dc2626;font-family:'Playfair Display',serif;font-size:19px;">28k</div><div style="font-size:10px;color:var(--text-muted);margin:2px 0 7px;">Est. Count /µL</div><div style="background:rgba(220,38,38,.1);height:4px;border-radius:100px;"><div style="width:18%;height:4px;border-radius:100px;background:#dc2626;"></div></div></div>
+        <div style="padding:13px 15px;border-right:1px solid var(--warm-gray);"><div id="modal-stat-platelets" style="color:#00b5a0;font-family:'Playfair Display',serif;font-size:19px;">—</div><div style="font-size:10px;color:var(--text-muted);margin:2px 0 7px;">Platelets</div><div style="background:rgba(0,229,196,.25);height:4px;border-radius:100px;"><div id="modal-bar-platelets" style="width:0%;height:4px;border-radius:100px;background:#00e5c4;transition:width .5s ease;"></div></div></div>
+        <div style="padding:13px 15px;border-right:1px solid var(--warm-gray);"><div id="modal-stat-rbc" style="color:#f87171;font-family:'Playfair Display',serif;font-size:19px;">—</div><div style="font-size:10px;color:var(--text-muted);margin:2px 0 7px;">Red Blood Cells</div><div style="background:rgba(248,113,113,.2);height:4px;border-radius:100px;"><div id="modal-bar-rbc" style="width:0%;height:4px;border-radius:100px;background:#f87171;transition:width .5s ease;"></div></div></div>
+        <div style="padding:13px 15px;border-right:1px solid var(--warm-gray);"><div id="modal-stat-wbc" style="color:#fbbf24;font-family:'Playfair Display',serif;font-size:19px;">—</div><div style="font-size:10px;color:var(--text-muted);margin:2px 0 7px;">White Blood Cells</div><div style="background:rgba(251,191,36,.2);height:4px;border-radius:100px;"><div id="modal-bar-wbc" style="width:0%;height:4px;border-radius:100px;background:#fbbf24;transition:width .5s ease;"></div></div></div>
+        <div style="padding:13px 15px;"><div id="modal-stat-estul" style="color:#dc2626;font-family:'Playfair Display',serif;font-size:19px;">—</div><div style="font-size:10px;color:var(--text-muted);margin:2px 0 7px;">Est. Count /µL</div><div style="background:rgba(220,38,38,.1);height:4px;border-radius:100px;"><div id="modal-bar-estul" style="width:0%;height:4px;border-radius:100px;background:#dc2626;transition:width .5s ease;"></div></div></div>
       </div>
     </div>
   </div>
@@ -3406,6 +3439,278 @@ setTimeout(() => {
     if (video && video.srcObject) startMotionWatch();
   }
 }, 2000);
+
+
+// ══════════════════════════════════════════════════════════════
+// ★ FULL VIEW MODAL — AUTO-DETECT + ZOOM
+// ══════════════════════════════════════════════════════════════
+
+let _modalAutoDetectEnabled = true;
+let _modalMotionInterval = null;
+let _modalLastFrameData = null;
+let _modalStableCount = 0;
+let _modalIsAnalyzing = false;
+let _lastModalAutoDetectTime = 0;
+
+// ── Zoom badge updater for modal ──────────────────────────────
+(function() {
+  const ZOOM_FACTORS = { '10x':'×1,000', '40x':'×15,000', '100x':'×100,000' };
+  const ZOOM_LABELS  = { '10x':'10× Magnification', '40x':'40× Magnification', '100x':'100× Magnification' };
+  document.addEventListener('change', function(e) {
+    if (e.target && e.target.name === 'modal-zoom-select') {
+      const badge = document.getElementById('modal-zoom-badge');
+      const tag   = document.getElementById('modal-zoom-tag');
+      if (badge) badge.textContent = ZOOM_FACTORS[e.target.value] || '';
+      if (tag)   tag.textContent   = ZOOM_LABELS[e.target.value]  || '';
+    }
+  });
+})();
+
+// ── Toggle modal auto-detect ──────────────────────────────────
+function toggleModalAutoDetect() {
+  const btn   = document.getElementById('btn-modal-autodetect');
+  const dot   = document.getElementById('modal-autodetect-dot');
+  const label = document.getElementById('modal-autodetect-label');
+  _modalAutoDetectEnabled = !_modalAutoDetectEnabled;
+  if (_modalAutoDetectEnabled) {
+    btn.style.background  = 'var(--teal-light)';
+    btn.style.borderColor = 'rgba(13,115,119,.3)';
+    btn.style.color       = 'var(--teal)';
+    dot.style.background  = 'var(--teal)';
+    dot.style.animation   = 'pulse 1.5s infinite';
+    label.textContent     = 'Auto-detect: ON';
+    startModalMotionWatch();
+  } else {
+    btn.style.background  = 'var(--off-white)';
+    btn.style.borderColor = 'var(--warm-gray)';
+    btn.style.color       = 'var(--text-muted)';
+    dot.style.background  = 'var(--mid-gray)';
+    dot.style.animation   = 'none';
+    label.textContent     = 'Auto-detect: OFF';
+    stopModalMotionWatch();
+    hideModalAutoDetectOverlay();
+    clearModalRealtimeCanvas();
+  }
+}
+
+function showModalAutoDetectOverlay() {
+  const el = document.getElementById('modal-autodetect-overlay');
+  if (el) el.style.display = 'block';
+}
+function hideModalAutoDetectOverlay() {
+  const el = document.getElementById('modal-autodetect-overlay');
+  if (el) el.style.display = 'none';
+}
+function clearModalRealtimeCanvas() {
+  const c = document.getElementById('modal-realtime-canvas');
+  if (c) { const ctx = c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); }
+}
+
+function setModalAutoDetectStatus(state, text, pct) {
+  const dot  = document.getElementById('modal-autodetect-status-dot');
+  const txt  = document.getElementById('modal-autodetect-status-text');
+  const prog = document.getElementById('modal-autodetect-progress-bar');
+  if (!dot || !txt || !prog) return;
+  const colors = { watching:'rgba(255,255,255,.5)', stable:'#00e5c4', analyzing:'#fbbf24', cooldown:'#f87171', done:'#4ade80' };
+  dot.style.background = colors[state] || '#ccc';
+  dot.style.animation  = (state==='analyzing'||state==='stable') ? 'pulse 0.8s infinite' : 'none';
+  txt.textContent      = text;
+  prog.style.width     = pct + '%';
+  prog.style.background = colors[state] || '#00e5c4';
+}
+
+function startModalMotionWatch() {
+  stopModalMotionWatch();
+  _modalStableCount = 0;
+  _modalLastFrameData = null;
+  const video = document.getElementById('modal-feed-video');
+  if (!video || !video.srcObject) return;
+  showModalAutoDetectOverlay();
+  setModalAutoDetectStatus('watching', 'Watching for stable frame…', 0);
+
+  _modalMotionInterval = setInterval(() => {
+    if (!video.videoWidth || _modalIsAnalyzing) return;
+    const now = Date.now();
+    const sample = getFrameSample(video, 160, 120);
+    const motion = frameMotion(_modalLastFrameData, sample);
+    _modalLastFrameData = sample;
+
+    if (motion > AUTO_DETECT_MOTION_THRESHOLD) {
+      _modalStableCount = 0;
+      setModalAutoDetectStatus('watching', 'Motion detected — stabilizing…', 0);
+      clearModalRealtimeCanvas();
+    } else {
+      _modalStableCount++;
+      const pct = Math.min(100, (_modalStableCount / (AUTO_DETECT_STABLE_SECONDS * 5)) * 100);
+      setModalAutoDetectStatus('stable', `Stable — analyzing in ${Math.max(0, AUTO_DETECT_STABLE_SECONDS - Math.floor(_modalStableCount/5)).toFixed(0)}s…`, pct);
+      if (_modalStableCount >= AUTO_DETECT_STABLE_SECONDS * 5) {
+        if (now - _lastModalAutoDetectTime > AUTO_DETECT_COOLDOWN_MS) {
+          _modalStableCount = 0;
+          _lastModalAutoDetectTime = now;
+          runModalRealtimeAnalysis(video);
+        } else {
+          const remaining = ((AUTO_DETECT_COOLDOWN_MS - (now - _lastModalAutoDetectTime)) / 1000).toFixed(0);
+          setModalAutoDetectStatus('cooldown', `Cooldown — next scan in ${remaining}s`, 100);
+        }
+      }
+    }
+  }, 200);
+}
+
+function stopModalMotionWatch() {
+  if (_modalMotionInterval) { clearInterval(_modalMotionInterval); _modalMotionInterval = null; }
+  _modalStableCount = 0;
+  _modalLastFrameData = null;
+}
+
+async function runModalRealtimeAnalysis(video) {
+  if (_modalIsAnalyzing) return;
+  _modalIsAnalyzing = true;
+  setModalAutoDetectStatus('analyzing', '⚙ Running AI analysis…', 100);
+
+  try {
+    const c = document.createElement('canvas');
+    c.width = video.videoWidth; c.height = video.videoHeight;
+    c.getContext('2d').drawImage(video, 0, 0);
+    const base64 = c.toDataURL('image/jpeg', 0.88).split(',')[1];
+    const selectedZoom = (document.querySelector('input[name="modal-zoom-select"]:checked') || {}).value || '40x';
+
+    const response = await fetch('/api/analyze-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: base64, mediaType: 'image/jpeg', zoom: selectedZoom }),
+      signal: AbortSignal.timeout(60000)
+    });
+    if (!response.ok) throw new Error('API error ' + response.status);
+    const result = await response.json();
+
+    const platelets  = parseInt(result.platelets)  || 0;
+    const rbc        = parseInt(result.rbc)         || 0;
+    const wbc        = parseInt(result.wbc)         || 0;
+    const estPerUl   = parseInt(result.est_per_ul)  || platelets * 500;
+    const severity   = result.severity || 'UNKNOWN';
+    const detections = result.detections || [];
+
+    // Draw on modal canvas
+    drawModalRealtimeBoxes(video, detections);
+
+    // Update modal stats
+    const fmtUl = estPerUl >= 1000 ? (estPerUl/1000).toFixed(0)+'k' : estPerUl;
+    const el = (id) => document.getElementById(id);
+    if (el('modal-stat-platelets')) el('modal-stat-platelets').textContent = platelets;
+    if (el('modal-stat-rbc'))       el('modal-stat-rbc').textContent       = rbc.toLocaleString();
+    if (el('modal-stat-wbc'))       el('modal-stat-wbc').textContent       = wbc;
+    if (el('modal-stat-estul'))     el('modal-stat-estul').textContent     = fmtUl;
+    if (el('modal-bar-platelets'))  el('modal-bar-platelets').style.width  = Math.min(100,(platelets/120)*100).toFixed(1)+'%';
+    if (el('modal-bar-rbc'))        el('modal-bar-rbc').style.width        = Math.min(100,(rbc/1500)*100).toFixed(1)+'%';
+    if (el('modal-bar-wbc'))        el('modal-bar-wbc').style.width        = Math.min(100,(wbc/20)*100).toFixed(1)+'%';
+    if (el('modal-bar-estul'))      el('modal-bar-estul').style.width      = Math.min(100,(estPerUl/400000)*100).toFixed(1)+'%';
+
+    // Also sync dashboard stats
+    currentAnalysisResult = { platelets, rbc, wbc, estPerUl, severity };
+    updateDashboardStats();
+
+    const timeStr = new Date().toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    setModalAutoDetectStatus('done', `✓ ${platelets} platelets · ${rbc} RBC · ${estPerUl.toLocaleString()}/µL — ${timeStr}`, 100);
+    setTimeout(() => {
+      if (_modalAutoDetectEnabled) setModalAutoDetectStatus('watching', 'Watching for stable frame…', 0);
+    }, 4000);
+
+  } catch(err) {
+    console.warn('Modal realtime error:', err.message);
+    setModalAutoDetectStatus('watching', 'Analysis failed — retrying…', 0);
+  } finally {
+    _modalIsAnalyzing = false;
+  }
+}
+
+function drawModalRealtimeBoxes(video, detections) {
+  const canvas = document.getElementById('modal-realtime-canvas');
+  if (!canvas) return;
+  canvas.style.display = 'block';
+  const container = document.getElementById('modal-feed-box');
+  const cw = container.clientWidth  || video.videoWidth  || 860;
+  const ch = container.clientHeight || video.videoHeight || 400;
+  canvas.width = cw; canvas.height = ch;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, cw, ch);
+  if (!detections || detections.length === 0) return;
+
+  const natW = video.videoWidth || cw, natH = video.videoHeight || ch;
+  const scale = Math.min(cw/natW, ch/natH);
+  const rW = natW*scale, rH = natH*scale;
+  const ox = (cw-rW)/2, oy = (ch-rH)/2;
+  const sx = rW/natW, sy = rH/natH;
+
+  const colors   = { Platelet:'#00e5c4', RBC:'#f87171', WBC:'#fbbf24' };
+  const bgColors = { Platelet:'rgba(0,229,196,.15)', RBC:'rgba(248,113,113,.1)', WBC:'rgba(251,191,36,.1)' };
+
+  let pIdx = 0;
+  detections.forEach(det => {
+    const [x1,y1,x2,y2] = det.bbox;
+    const sx1=ox+x1*sx, sy1=oy+y1*sy, sw=(x2-x1)*sx, sh=(y2-y1)*sy;
+    ctx.fillStyle = bgColors[det.class_name]||'rgba(255,255,255,.06)';
+    ctx.fillRect(sx1,sy1,sw,sh);
+    ctx.strokeStyle = colors[det.class_name]||'#fff';
+    ctx.lineWidth = det.class_name==='Platelet' ? 2 : 1.5;
+    ctx.strokeRect(sx1,sy1,sw,sh);
+    if (det.class_name === 'Platelet') {
+      pIdx++;
+      const label = `P${pIdx}`;
+      const fs = Math.max(10, Math.round(cw*0.014));
+      ctx.font = `bold ${fs}px Poppins, Arial`;
+      const tw = ctx.measureText(label).width + 6, lh = fs + 6;
+      ctx.fillStyle = colors.Platelet;
+      ctx.fillRect(sx1, sy1-lh, tw, lh);
+      ctx.fillStyle = '#0a0d14';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, sx1+3, sy1-lh/2);
+    }
+  });
+
+  // Legend
+  const items = [{l:'Platelet',c:colors.Platelet},{l:'RBC',c:colors.RBC},{l:'WBC',c:colors.WBC}];
+  const lfs = Math.max(10, Math.round(cw*0.014));
+  let llx = cw-90, lly = 10;
+  items.forEach(item => {
+    ctx.fillStyle = 'rgba(10,13,20,.75)';
+    ctx.fillRect(llx, lly, 82, lfs+8);
+    ctx.fillStyle = item.c;
+    ctx.fillRect(llx+5, lly+4, lfs*.7, lfs*.7);
+    ctx.fillStyle = '#fff'; ctx.font = `${lfs*.85}px Arial`;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText(item.l, llx+5+lfs*.7+6, lly+4);
+    lly += lfs+12;
+  });
+}
+
+// ── Override openFeedModal to start modal motion watch ────────
+const _origOpenFeedModal = openFeedModal;
+openFeedModal = function() {
+  _origOpenFeedModal();
+  // Sync zoom badge on open
+  const badge = document.getElementById('modal-zoom-badge');
+  const tag   = document.getElementById('modal-zoom-tag');
+  if (badge) badge.textContent = '×15,000';
+  if (tag)   tag.textContent   = '40× Magnification';
+  // Start modal motion watch after camera stabilizes
+  if (_modalAutoDetectEnabled) {
+    setTimeout(() => {
+      const video = document.getElementById('modal-feed-video');
+      if (video && video.srcObject) startModalMotionWatch();
+      else setTimeout(() => startModalMotionWatch(), 1500);
+    }, 1800);
+  }
+};
+
+// ── Override closeFeedModal to stop modal motion watch ────────
+const _origCloseFeedModal = closeFeedModal;
+closeFeedModal = function() {
+  _origCloseFeedModal();
+  stopModalMotionWatch();
+  hideModalAutoDetectOverlay();
+  clearModalRealtimeCanvas();
+};
 
 </script>
 </body>
