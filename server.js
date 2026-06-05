@@ -117,7 +117,7 @@ app.post('/api/analyze-image', aiLimiter, async (req, res) => {
     const response = await fetch(`${INFERENCE_URL}/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image, confidence: 0.25 }),
+      body: JSON.stringify({ image, confidence: 0.15 }),
       signal: AbortSignal.timeout(60000), // 60s timeout — HF free tier needs time to wake
     });
 
@@ -128,36 +128,24 @@ app.post('/api/analyze-image', aiLimiter, async (req, res) => {
 
     const data = await response.json();
 
-    // data shape: { platelet_count, rbc_count, wbc_count, risk_level, detections }
-    // Estimate /µL: platelets per field × 500 (standard calibration factor)
-    const estPerUl = (data.platelet_count || 0) * 500;
-
-    // Map risk_level from YOLOv8 server → severity labels used in the frontend
-    const riskMap = { NORMAL: 'NORMAL', LOW: 'LOW', CRITICAL: 'CRITICAL', UNKNOWN: 'UNKNOWN' };
-    const severity = riskMap[data.risk_level] || 'UNKNOWN';
-
-    // WHO dengue severity override based on estimated /µL.
-    // Only apply when at least one platelet was detected — a count of 0 means
-    // the model found nothing (bad image / model confidence issue), which is
-    // different from true thrombocytopenia, and should not auto-report CRITICAL.
-    let finalSeverity = severity;
-    if (data.platelet_count > 0) {
-      if (estPerUl < 20000)       finalSeverity = 'CRITICAL';
-      else if (estPerUl < 50000)  finalSeverity = 'DANGER';
-      else if (estPerUl < 150000) finalSeverity = 'LOW';
-      else                        finalSeverity = 'NORMAL';
-    }
+    // Inference server returns: { platelets, rbc, wbc, est_per_ul, severity, detections, ... }
+    // Pass through directly — the inference server already calculates est_per_ul and severity
+    const platelets = data.platelets  || 0;
+    const rbc       = data.rbc        || 0;
+    const wbc       = data.wbc        || 0;
+    const estPerUl  = data.est_per_ul || platelets * 500;
+    const severity  = data.severity   || 'UNKNOWN';
 
     res.json({
-      platelets:   data.platelet_count  || 0,
-      rbc:         data.rbc_count       || 0,
-      wbc:         data.wbc_count       || 0,
+      platelets,
+      rbc,
+      wbc,
       est_per_ul:  estPerUl,
-      severity:    finalSeverity,
-      detections:  data.detections      || [],
-      note: data.platelet_count > 0
-        ? `YOLOv8 detected ${data.platelet_count} platelet(s) in this field of view.`
-        : `No platelets detected. Try a clearer 40×–100× image or adjust microscope focus.`,
+      severity,
+      detections:  data.detections || [],
+      note: data.note || (platelets > 0
+        ? `YOLOv8 detected ${platelets} platelet(s) in this field of view.`
+        : `No platelets detected. Try a clearer 40×–100× image or adjust microscope focus.`),
     });
 
   } catch (err) {
