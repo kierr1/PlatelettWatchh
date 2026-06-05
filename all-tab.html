@@ -1258,9 +1258,8 @@ body{background-image:radial-gradient(var(--warm-gray) 1px,transparent 1px);back
 <script>
 
 // ── Config — update these if your server runs on a different host/port ──
-// Always use the same origin — Render proxies everything through /api/
 const INFERENCE_URL      = window.location.origin;
-const OPENROUTER_API_KEY = null; // handled server-side, never expose in frontend
+const OPENROUTER_API_KEY = null; // key is stored server-side in Render env vars
 
 // ── Microscope Feed (shared camera stream) ────────────────────────────
 let _feedStream = null;
@@ -1750,9 +1749,9 @@ async function sendChat() {
   const typingEl = appendMsg('bot', '⋯ thinking…', true, false);
 
   try {
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + OPENROUTER_API_KEY },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
         messages: [
