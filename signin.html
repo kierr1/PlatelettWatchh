@@ -617,19 +617,7 @@
   </div>
 </div>
 <script>
-  // ── Disable Facebook OAuth until a real App ID is configured ─────────
-  // To enable: register at https://developers.facebook.com, get an App ID,
-  // enable it in Supabase Dashboard → Auth → Providers → Facebook,
-  // then remove the disabled attribute and lines below.
-  (function() {
-    const fbBtn = document.getElementById('btn-fb');
-    if (fbBtn) {
-      fbBtn.disabled = true;
-      fbBtn.style.opacity = '0.45';
-      fbBtn.style.cursor = 'not-allowed';
-      fbBtn.title = 'Facebook login is not yet configured. Contact admin.';
-    }
-  })();
+  // Facebook OAuth enabled — configured in Supabase Dashboard
 
   // ── Guard: prevent double-redirect from getSession + onAuthStateChange ──
   let _authHandled = false;
